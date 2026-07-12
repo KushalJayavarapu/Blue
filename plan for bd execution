@@ -1,0 +1,182 @@
+Here's Step 2, broken into an exact sequence your backend person(s) can execute without guesswork. I'll give the commands, the folder structure, and the actual file contents for the skeleton.
+
+## 2.1 — Initialize the project
+
+```bash
+mkdir server && cd server
+npm init -y
+npm install express prisma @prisma/client dotenv bcrypt jsonwebtoken multer cors
+npm install -D typescript ts-node-dev @types/express @types/node @types/bcrypt @types/jsonwebtoken @types/multer @types/cors
+npx tsc --init
+```
+
+## 2.2 — Folder structure to create
+
+```
+server/
+├── prisma/
+│   └── schema.prisma        ← paste the validated schema here
+├── src/
+│   ├── routes/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── utils/
+│   ├── app.ts
+│   └── server.ts
+├── uploads/                 ← for CSR/Challenge proof files
+├── .env
+├── .gitignore
+├── tsconfig.json
+└── package.json
+```
+
+Commands:
+```bash
+mkdir -p src/routes src/controllers src/middleware src/utils uploads
+```
+
+## 2.3 — Configure `tsconfig.json`
+
+Replace the generated file with this (lean config, matches Node/Express needs):
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
+  },
+  "include": ["src/**/*"]
+}
+```
+
+## 2.4 — Set up `.env` and `.gitignore`
+
+`.env`:
+```
+DATABASE_URL="file:./dev.db"
+JWT_SECRET="replace-with-a-random-string"
+PORT=4000
+```
+
+`.gitignore`:
+```
+node_modules/
+dist/
+.env
+prisma/dev.db
+uploads/*
+!uploads/.gitkeep
+```
+
+**Important**: your Prisma schema file goes in `prisma/schema.prisma` — paste the validated schema from the last step there now, and add `env("DATABASE_URL")` is already wired since that's already in the schema's `datasource` block.
+
+## 2.5 — Run the first migration
+
+```bash
+npx prisma migrate dev --name init
+```
+
+This creates `dev.db` (SQLite file), applies your schema, and generates the Prisma Client. Confirm it worked:
+
+```bash
+npx prisma studio
+```
+
+This opens a browser GUI showing all your tables empty but present — if this loads and shows every model from the schema, migration succeeded.
+
+## 2.6 — `src/app.ts` (Express app setup)
+
+```typescript
+import express from 'express';
+import cors from 'cors';
+import healthRoute from './routes/health.route';
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+app.use('/uploads', express.static('uploads'));
+
+app.use('/api/health', healthRoute);
+
+export default app;
+```
+
+## 2.7 — `src/server.ts` (entry point)
+
+```typescript
+import dotenv from 'dotenv';
+dotenv.config();
+
+import app from './app';
+
+const PORT = process.env.PORT || 4000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
+```
+
+## 2.8 — `src/routes/health.route.ts` (the health-check route)
+
+```typescript
+import { Router } from 'express';
+import { PrismaClient } from '@prisma/client';
+
+const router = Router();
+const prisma = new PrismaClient();
+
+router.get('/', async (req, res) => {
+  try {
+    // simple query to confirm DB connection is alive, not just the server
+    await prisma.$queryRaw`SELECT 1`;
+    res.status(200).json({ status: 'ok', db: 'connected' });
+  } catch (err) {
+    res.status(500).json({ status: 'error', db: 'disconnected' });
+  }
+});
+
+export default router;
+```
+
+## 2.9 — Add dev script to `package.json`
+
+Add this under `"scripts"`:
+```json
+"scripts": {
+  "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+  "build": "tsc",
+  "start": "node dist/server.js"
+}
+```
+
+## 2.10 — Verify everything works
+
+```bash
+npm run dev
+```
+
+Then in a browser or via curl:
+```bash
+curl http://localhost:4000/api/health
+```
+
+Expected response: `{"status":"ok","db":"connected"}` — this confirms three things simultaneously: TypeScript compiles, Express serves requests, and Prisma can actually talk to your SQLite database. If this returns cleanly, Step 2 is done and Step 3 (Auth) can start immediately.
+
+---
+
+## Checklist to confirm before moving to Step 3
+- [ ] `npm run dev` starts with no errors
+- [ ] `/api/health` returns `db: "connected"`
+- [ ] `npx prisma studio` shows all your models (tables) present and empty
+- [ ] `.env` and `dev.db` are NOT committed to git (check `git status` shows them ignored)
+- [ ] Folder structure matches above, so Persons 2-4 know exactly where to add their routes/controllers later
+
+Once this is confirmed working, hand it to whoever's doing Step 3 (auth) — they build directly on top of this `app.ts`/`server.ts` foundation without needing to touch the setup again.
