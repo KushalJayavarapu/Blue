@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
-import { Search, Bell, LogOut, User, ChevronDown } from 'lucide-react';
+import { Search, Bell, LogOut, User, ChevronDown, Sun, Moon } from 'lucide-react';
 
 interface TopNavProps {
   onLogout: () => void;
+  isDark: boolean;
+  onToggleTheme: () => void;
 }
 
 const notifications = [
@@ -12,7 +14,7 @@ const notifications = [
   { title: 'Audit scheduled', desc: 'ESG Disclosure Audit set for Jan 15, 2027', time: '5h ago', color: 'text-blue-400', dot: 'bg-blue-500' },
 ];
 
-export function TopNav({ onLogout }: TopNavProps) {
+export function TopNav({ onLogout, isDark, onToggleTheme }: TopNavProps) {
   const [showNotifs, setShowNotifs] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [unread, setUnread] = useState(3);
@@ -42,7 +44,47 @@ export function TopNav({ onLogout }: TopNavProps) {
         </div>
       </div>
 
-      <div className="flex items-center gap-1.5 ml-auto">
+      <div className="flex items-center gap-1 ml-auto">
+
+        {/* Theme Toggle */}
+        <button
+          onClick={onToggleTheme}
+          title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+          className={`
+            relative flex items-center gap-1 px-1 py-1 rounded-xl transition-all duration-300 group
+            ${isDark
+              ? 'bg-[#111827] border border-[#1a2035] hover:border-[#2a3550]'
+              : 'bg-[#111827] border border-[#1a2035] hover:border-[#2a3550]'
+            }
+          `}
+          style={{ minWidth: 60 }}
+        >
+          {/* Sun */}
+          <span className={`
+            flex items-center justify-center w-6 h-6 rounded-lg transition-all duration-300
+            ${!isDark ? 'bg-amber-500/20 text-amber-400' : 'text-gray-600 hover:text-gray-400'}
+          `}>
+            <Sun className="w-3.5 h-3.5" />
+          </span>
+          {/* Moon */}
+          <span className={`
+            flex items-center justify-center w-6 h-6 rounded-lg transition-all duration-300
+            ${isDark ? 'bg-blue-500/20 text-blue-400' : 'text-gray-600 hover:text-gray-400'}
+          `}>
+            <Moon className="w-3.5 h-3.5" />
+          </span>
+          {/* Sliding indicator pill */}
+          <span
+            className={`
+              absolute top-1 w-6 h-6 rounded-lg transition-all duration-300 pointer-events-none
+              ${isDark ? 'translate-x-[30px] bg-blue-500/15 border border-blue-500/30' : 'translate-x-[2px] bg-amber-500/15 border border-amber-500/30'}
+            `}
+          />
+        </button>
+
+        {/* Divider */}
+        <div className="w-px h-5 bg-[#1a2035] mx-1" />
+
         {/* Notifications */}
         <div className="relative" ref={notifsRef}>
           <button
@@ -79,7 +121,7 @@ export function TopNav({ onLogout }: TopNavProps) {
         </div>
 
         {/* Divider */}
-        <div className="w-px h-5 bg-[#1a2035]" />
+        <div className="w-px h-5 bg-[#1a2035] mx-1" />
 
         {/* Profile */}
         <div className="relative" ref={profileRef}>

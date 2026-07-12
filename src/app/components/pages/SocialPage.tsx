@@ -1,9 +1,8 @@
-import { useState } from 'react';
-import { Users, UserCheck, BarChart3, Check, X } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Users, UserCheck, BarChart3, Check, X, Upload, Download, TrendingUp } from 'lucide-react';
 import { toast } from 'sonner';
 
 type SocialTab = 'csr' | 'participation' | 'diversity';
-
 type ParticipationStatus = 'pending' | 'approved' | 'rejected';
 
 type Participant = {
@@ -43,6 +42,166 @@ const deptDiversity = [
   { name: 'HR', female: 71 }, { name: 'Marketing', female: 62 }, { name: 'Finance', female: 45 },
   { name: 'Operations', female: 35 }, { name: 'Sales', female: 40 }, { name: 'Engineering', female: 28 },
 ];
+
+function downloadCSV(filename: string, rows: string[][]) {
+  const csv = rows.map(r => r.map(v => `"${v.replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function AnalyzeModal({ data, onClose }: { data: Participant[]; onClose: () => void }) {
+  const total = data.length;
+  const approved = data.filter(p => p.status === 'approved').length;
+  const rejected = data.filter(p => p.status === 'rejected').length;
+  const pending = data.filter(p => p.status === 'pending').length;
+  const approvalRate = total > 0 ? Math.round((approved / total) * 100) : 0;
+
+  const byDept = Object.entries(
+    data.reduce<Record<string, number>>((acc, p) => { acc[p.dept] = (acc[p.dept] || 0) + 1; return acc; }, {})
+  ).sort((a, b) => b[1] - a[1]);
+
+  const byActivity = Object.entries(
+    data.reduce<Record<string, number>>((acc, p) => { acc[p.activity] = (acc[p.activity] || 0) + 1; return acc; }, {})
+  ).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+  const handleExportReport = () => {
+    const rows = [
+      ['Metric', 'Value'],
+      ['Total Participants', String(total)],
+      ['Approved', String(approved)],
+      ['Rejected', String(rejected)],
+      ['Pending', String(pending)],
+      ['Approval Rate', `${approvalRate}%`],
+      [''],
+      ['Department', 'Count'],
+      ...byDept.map(([dept, count]) => [dept, String(count)]),
+      [''],
+      ['Activity', 'Count'],
+      ...byActivity.map(([act, count]) => [act, String(count)]),
+    ];
+    downloadCSV('social_analysis_report.csv', rows);
+    toast.success('Analysis report exported');
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-[2px]" onClick={onClose} />
+      <div className="relative bg-[#0d1222] border border-[#1a2035] rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-[#1a2035]">
+          <div>
+            <h2 className="text-sm font-semibold text-white flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-blue-400" /> Participation Analysis
+            </h2>
+            <p className="text-[11px] text-gray-500 mt-0.5">Based on {total} participation records · Jul 2026</p>
+          </div>
+          <button onClick={onClose} className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-[#1a2035] text-gray-500 hover:text-gray-300 transition-colors">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="p-6 space-y-5 max-h-[70vh] overflow-y-auto">
+          {/* KPI row */}
+          <div className="grid grid-cols-4 gap-3">
+            {[
+              { label: 'Total Records', value: total, color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/20' },
+              { label: 'Approval Rate', value: `${approvalRate}%`, color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
+              { label: 'Pending Review', value: pending, color: 'text-yellow-400', bg: 'bg-yellow-500/10 border-yellow-500/20' },
+              { label: 'Rejected', value: rejected, color: 'text-red-400', bg: 'bg-red-500/10 border-red-500/20' },
+            ].map(k => (
+              <div key={k.label} className={`border rounded-xl p-3 text-center ${k.bg}`}>
+                <div className={`text-xl font-bold ${k.color}`}>{k.value}</div>
+                <div className="text-[10px] text-gray-500 mt-0.5">{k.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Approval breakdown bar */}
+          <div className="bg-[#111827] border border-[#1a2035] rounded-xl p-4">
+            <h4 className="text-xs font-semibold text-gray-400 mb-3">Status Breakdown</h4>
+            <div className="flex h-3 rounded-full overflow-hidden gap-0.5">
+              {approved > 0 && <div className="bg-emerald-500 transition-all" style={{ width: `${(approved / total) * 100}%` }} title={`Approved: ${approved}`} />}
+              {pending > 0 && <div className="bg-yellow-500 transition-all" style={{ width: `${(pending / total) * 100}%` }} title={`Pending: ${pending}`} />}
+              {rejected > 0 && <div className="bg-red-500 transition-all" style={{ width: `${(rejected / total) * 100}%` }} title={`Rejected: ${rejected}`} />}
+            </div>
+            <div className="flex items-center gap-4 mt-2">
+              {[
+                { label: 'Approved', count: approved, color: 'bg-emerald-500' },
+                { label: 'Pending', count: pending, color: 'bg-yellow-500' },
+                { label: 'Rejected', count: rejected, color: 'bg-red-500' },
+              ].map(s => (
+                <div key={s.label} className="flex items-center gap-1.5 text-[11px] text-gray-500">
+                  <span className={`w-2 h-2 rounded-full ${s.color}`} />
+                  {s.label}: {s.count}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            {/* Dept breakdown */}
+            <div className="bg-[#111827] border border-[#1a2035] rounded-xl p-4">
+              <h4 className="text-xs font-semibold text-gray-400 mb-3">By Department</h4>
+              <div className="space-y-2.5">
+                {byDept.map(([dept, count]) => (
+                  <div key={dept}>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-gray-300">{dept}</span>
+                      <span className="text-[11px] text-blue-400 font-medium">{count}</span>
+                    </div>
+                    <div className="h-1.5 bg-[#1a2035] rounded-full overflow-hidden">
+                      <div className="h-full bg-blue-500 rounded-full" style={{ width: `${(count / Math.max(...byDept.map(d => d[1]))) * 100}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Activity breakdown */}
+            <div className="bg-[#111827] border border-[#1a2035] rounded-xl p-4">
+              <h4 className="text-xs font-semibold text-gray-400 mb-3">Top Activities</h4>
+              <div className="space-y-2.5">
+                {byActivity.map(([act, count]) => (
+                  <div key={act}>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[11px] text-gray-300 truncate pr-2">{act}</span>
+                      <span className="text-[11px] text-violet-400 font-medium shrink-0">{count}</span>
+                    </div>
+                    <div className="h-1.5 bg-[#1a2035] rounded-full overflow-hidden">
+                      <div className="h-full bg-violet-500 rounded-full" style={{ width: `${(count / Math.max(...byActivity.map(d => d[1]))) * 100}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="px-6 py-4 border-t border-[#1a2035] flex items-center justify-between">
+          <p className="text-[11px] text-gray-600">Generated {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+          <div className="flex gap-2">
+            <button
+              onClick={handleExportReport}
+              className="flex items-center gap-2 px-3.5 py-2 bg-[#111827] border border-[#1a2035] text-gray-400 hover:text-gray-200 text-xs rounded-xl transition-colors"
+            >
+              <Download className="w-3.5 h-3.5" /> Export Report
+            </button>
+            <button
+              onClick={onClose}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-xl transition-colors"
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function EmployeeDrawer({ employee, onClose }: { employee: Participant; onClose: () => void }) {
   return (
@@ -107,6 +266,8 @@ export function SocialPage() {
     Object.fromEntries(csrActivities.map(a => [a.id, a.participants]))
   );
   const [joinedActivities, setJoinedActivities] = useState<Set<number>>(new Set());
+  const [analyzeOpen, setAnalyzeOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const tabs = [
     { id: 'csr' as SocialTab, label: 'CSR Activities', icon: Users },
@@ -136,11 +297,142 @@ export function SocialPage() {
     toast.error(`Rejected ${name}'s participation`);
   };
 
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const text = evt.target?.result as string;
+      const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      if (lines.length < 2) {
+        toast.error('File is empty or has no data rows');
+        return;
+      }
+      const dataLines = lines.slice(1); // skip header row
+
+      const imported: Participant[] = dataLines.reduce<Participant[]>((acc, line, i) => {
+        const cols = line.split(',').map(c => c.trim().replace(/^["']|["']$/g, ''));
+        if (cols.length < 2) return acc;
+        const rawStatus = (cols[4] ?? '').toLowerCase();
+        const status: ParticipationStatus =
+          rawStatus === 'approved' ? 'approved' :
+          rawStatus === 'rejected' ? 'rejected' : 'pending';
+        acc.push({
+          id: Date.now() + i,
+          employee: cols[0] || 'Unknown',
+          dept: cols[1] || 'General',
+          activity: cols[2] || 'CSR Activity',
+          evidence: cols[3] || 'N/A',
+          status,
+        });
+        return acc;
+      }, []);
+
+      if (imported.length === 0) {
+        toast.error('No valid records found. Expected: Employee,Department,Activity,Evidence,Status');
+        return;
+      }
+
+      setParticipation(prev => [...prev, ...imported]);
+      toast.success(`Imported ${imported.length} employee record${imported.length > 1 ? 's' : ''}`);
+    };
+
+    reader.onerror = () => toast.error('Failed to read file');
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
+  const handleExportParticipation = () => {
+    const rows = [
+      ['Employee', 'Department', 'Activity', 'Evidence', 'Status'],
+      ...participation.map(p => [p.employee, p.dept, p.activity, p.evidence, p.status]),
+    ];
+    downloadCSV('social_participation.csv', rows);
+    toast.success(`Exported ${participation.length} participation records`);
+  };
+
+  const handleExportCSRActivities = () => {
+    const rows = [
+      ['Activity', 'Category', 'Participants', 'Points'],
+      ...csrActivities.map(a => [a.title, a.category, String(activityCounts[a.id]), String(a.points)]),
+    ];
+    downloadCSV('csr_activities.csv', rows);
+    toast.success('CSR activities exported');
+  };
+
+  const handleExportDiversity = () => {
+    const rows = [
+      ['Metric', 'Value'],
+      ...divGenderData.map(d => [d.label, `${d.value}%`]),
+      [''],
+      ['Department', 'Female %'],
+      ...deptDiversity.map(d => [d.name, `${d.female}%`]),
+    ];
+    downloadCSV('diversity_metrics.csv', rows);
+    toast.success('Diversity data exported');
+  };
+
   return (
     <div className="space-y-5">
-      <div>
-        <h1 className="text-xl font-semibold text-white">Social</h1>
-        <p className="text-xs text-gray-500 mt-0.5">Manage CSR activities, track employee participation, and monitor diversity metrics</p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-xl font-semibold text-white">Social</h1>
+          <p className="text-xs text-gray-500 mt-0.5">Manage CSR activities, track employee participation, and monitor diversity metrics</p>
+        </div>
+
+        {/* Global toolbar */}
+        <div className="flex items-center gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".csv,.txt"
+            className="hidden"
+            onChange={handleImport}
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="flex items-center gap-2 px-3 py-2 bg-[#111827] border border-[#1a2035] hover:border-blue-500/40 text-gray-400 hover:text-blue-400 text-xs rounded-xl transition-colors"
+            title="Import CSV: Employee,Department,Activity,Evidence,Status"
+          >
+            <Upload className="w-3.5 h-3.5" /> Import Data
+          </button>
+
+          {activeTab === 'participation' && (
+            <>
+              <button
+                onClick={() => setAnalyzeOpen(true)}
+                className="flex items-center gap-2 px-3 py-2 bg-blue-600/15 border border-blue-500/25 text-blue-400 hover:bg-blue-600/25 text-xs rounded-xl transition-colors"
+              >
+                <TrendingUp className="w-3.5 h-3.5" /> Analyze
+              </button>
+              <button
+                onClick={handleExportParticipation}
+                className="flex items-center gap-2 px-3 py-2 bg-[#111827] border border-[#1a2035] text-gray-400 hover:text-gray-200 text-xs rounded-xl transition-colors"
+              >
+                <Download className="w-3.5 h-3.5" /> Export CSV
+              </button>
+            </>
+          )}
+
+          {activeTab === 'csr' && (
+            <button
+              onClick={handleExportCSRActivities}
+              className="flex items-center gap-2 px-3 py-2 bg-[#111827] border border-[#1a2035] text-gray-400 hover:text-gray-200 text-xs rounded-xl transition-colors"
+            >
+              <Download className="w-3.5 h-3.5" /> Export CSV
+            </button>
+          )}
+
+          {activeTab === 'diversity' && (
+            <button
+              onClick={handleExportDiversity}
+              className="flex items-center gap-2 px-3 py-2 bg-[#111827] border border-[#1a2035] text-gray-400 hover:text-gray-200 text-xs rounded-xl transition-colors"
+            >
+              <Download className="w-3.5 h-3.5" /> Export CSV
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="flex gap-1 bg-[#0d1222] border border-[#1a2035] p-1 rounded-xl w-fit">
@@ -194,72 +486,91 @@ export function SocialPage() {
       )}
 
       {activeTab === 'participation' && (
-        <div className="bg-[#0d1222] border border-[#1a2035] rounded-2xl overflow-hidden">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-[#1a2035]">
-                {['Employee', 'Activity', 'Evidence', 'Approval Status', 'Actions'].map(h => (
-                  <th key={h} className="px-5 py-3.5 text-left text-[11px] font-medium text-gray-600">{h}</th>
+        <div className="space-y-3">
+          {/* Import format hint */}
+          <div className="flex items-center gap-2 px-3 py-2 bg-blue-500/5 border border-blue-500/15 rounded-xl">
+            <Upload className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+            <p className="text-[11px] text-blue-400">
+              Import CSV format: <span className="font-mono bg-blue-500/10 px-1 rounded">Employee, Department, Activity, Evidence, Status</span>
+            </p>
+          </div>
+
+          <div className="bg-[#0d1222] border border-[#1a2035] rounded-2xl overflow-hidden">
+            <div className="px-5 py-3 border-b border-[#1a2035] flex items-center justify-between">
+              <span className="text-xs font-medium text-gray-400">{participation.length} records</span>
+              <div className="flex items-center gap-3 text-[11px]">
+                {[
+                  { label: 'Approved', count: participation.filter(p => p.status === 'approved').length, color: 'text-emerald-400' },
+                  { label: 'Pending', count: participation.filter(p => p.status === 'pending').length, color: 'text-yellow-400' },
+                  { label: 'Rejected', count: participation.filter(p => p.status === 'rejected').length, color: 'text-red-400' },
+                ].map(s => (
+                  <span key={s.label} className={`${s.color}`}>{s.label}: {s.count}</span>
                 ))}
-              </tr>
-            </thead>
-            <tbody>
-              {participation.map(row => (
-                <tr key={row.id} className="border-b border-[#1a2035] hover:bg-[#111827] transition-colors">
-                  <td className="px-5 py-3.5">
-                    <button
-                      className="flex items-center gap-2.5 text-left"
-                      onClick={() => setSelectedEmployee(row)}
-                    >
-                      <div className="w-7 h-7 rounded-full bg-blue-500/15 border border-blue-500/25 flex items-center justify-center text-[11px] font-semibold shrink-0 text-blue-400">
-                        {row.employee.split(' ').map(n => n[0]).join('')}
-                      </div>
-                      <div>
-                        <div className="text-xs font-medium text-gray-200 hover:text-blue-400 transition-colors">{row.employee}</div>
-                        <div className="text-[10px] text-gray-600">{row.dept}</div>
-                      </div>
-                    </button>
-                  </td>
-                  <td className="px-5 py-3.5 text-xs text-gray-300">{row.activity}</td>
-                  <td className="px-5 py-3.5">
-                    <button
-                      onClick={() => toast.info(`Opening ${row.evidence}...`)}
-                      className="text-xs text-blue-400 underline cursor-pointer hover:text-blue-300 transition-colors"
-                    >
-                      {row.evidence}
-                    </button>
-                  </td>
-                  <td className="px-5 py-3.5">
-                    <span className={`text-[11px] px-2.5 py-0.5 rounded-full border capitalize ${
-                      row.status === 'approved' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' :
-                      row.status === 'rejected' ? 'text-red-400 bg-red-500/10 border-red-500/20' :
-                      'text-yellow-400 bg-yellow-500/10 border-yellow-500/20'
-                    }`}>{row.status}</span>
-                  </td>
-                  <td className="px-5 py-3.5">
-                    {row.status === 'pending' ? (
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => handleApprove(row.id, row.employee)}
-                          className="flex items-center gap-1 px-2.5 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[11px] rounded-lg hover:bg-emerald-500/20 transition-colors"
-                        >
-                          <Check className="w-3 h-3" /> Approve
-                        </button>
-                        <button
-                          onClick={() => handleReject(row.id, row.employee)}
-                          className="flex items-center gap-1 px-2.5 py-1.5 bg-red-500/10 border border-red-500/20 text-red-400 text-[11px] rounded-lg hover:bg-red-500/20 transition-colors"
-                        >
-                          <X className="w-3 h-3" /> Reject
-                        </button>
-                      </div>
-                    ) : (
-                      <span className="text-[11px] text-gray-600">—</span>
-                    )}
-                  </td>
+              </div>
+            </div>
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-[#1a2035]">
+                  {['Employee', 'Activity', 'Evidence', 'Approval Status', 'Actions'].map(h => (
+                    <th key={h} className="px-5 py-3.5 text-left text-[11px] font-medium text-gray-600">{h}</th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {participation.map(row => (
+                  <tr key={row.id} className="border-b border-[#1a2035] hover:bg-[#111827] transition-colors">
+                    <td className="px-5 py-3.5">
+                      <button className="flex items-center gap-2.5 text-left" onClick={() => setSelectedEmployee(row)}>
+                        <div className="w-7 h-7 rounded-full bg-blue-500/15 border border-blue-500/25 flex items-center justify-center text-[11px] font-semibold shrink-0 text-blue-400">
+                          {row.employee.split(' ').map(n => n[0]).join('')}
+                        </div>
+                        <div>
+                          <div className="text-xs font-medium text-gray-200 hover:text-blue-400 transition-colors">{row.employee}</div>
+                          <div className="text-[10px] text-gray-600">{row.dept}</div>
+                        </div>
+                      </button>
+                    </td>
+                    <td className="px-5 py-3.5 text-xs text-gray-300">{row.activity}</td>
+                    <td className="px-5 py-3.5">
+                      <button
+                        onClick={() => toast.info(`Opening ${row.evidence}…`)}
+                        className="text-xs text-blue-400 underline hover:text-blue-300 transition-colors"
+                      >
+                        {row.evidence}
+                      </button>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <span className={`text-[11px] px-2.5 py-0.5 rounded-full border capitalize ${
+                        row.status === 'approved' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' :
+                        row.status === 'rejected' ? 'text-red-400 bg-red-500/10 border-red-500/20' :
+                        'text-yellow-400 bg-yellow-500/10 border-yellow-500/20'
+                      }`}>{row.status}</span>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      {row.status === 'pending' ? (
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleApprove(row.id, row.employee)}
+                            className="flex items-center gap-1 px-2.5 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[11px] rounded-lg hover:bg-emerald-500/20 transition-colors"
+                          >
+                            <Check className="w-3 h-3" /> Approve
+                          </button>
+                          <button
+                            onClick={() => handleReject(row.id, row.employee)}
+                            className="flex items-center gap-1 px-2.5 py-1.5 bg-red-500/10 border border-red-500/20 text-red-400 text-[11px] rounded-lg hover:bg-red-500/20 transition-colors"
+                          >
+                            <X className="w-3 h-3" /> Reject
+                          </button>
+                        </div>
+                      ) : (
+                        <span className="text-[11px] text-gray-600">—</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
@@ -315,6 +626,7 @@ export function SocialPage() {
       )}
 
       {selectedEmployee && <EmployeeDrawer employee={selectedEmployee} onClose={() => setSelectedEmployee(null)} />}
+      {analyzeOpen && <AnalyzeModal data={participation} onClose={() => setAnalyzeOpen(false)} />}
     </div>
   );
 }
