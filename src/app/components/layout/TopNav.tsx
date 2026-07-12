@@ -65,7 +65,7 @@ export function TopNav({ onLogout }: TopNavProps) {
   return (
     <>
     <header
-      className="h-14 flex items-center px-6 gap-4 shrink-0"
+      className="h-14 flex items-center px-6 gap-4 shrink-0 relative z-30"
       style={{
         background: 'linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(250,240,232,0.70) 100%)',
         backdropFilter: 'blur(20px) saturate(1.8)',
@@ -98,7 +98,10 @@ export function TopNav({ onLogout }: TopNavProps) {
           </button>
 
           {showNotifs && (
-            <div className="absolute right-0 top-10 w-80 bg-[#111827] border border-[#1a2035] rounded-xl shadow-2xl z-50 overflow-hidden">
+            <div
+              className="absolute right-0 top-10 w-80 rounded-xl z-50 overflow-hidden border"
+              style={{ background: '#FBF4EC', borderColor: 'rgba(112,75,106,0.18)', boxShadow: '0 8px 32px -8px rgba(45,27,41,0.35)' }}
+            >
               <div className="px-4 py-3 border-b border-[#1a2035] flex items-center justify-between">
                 <span className="text-xs font-semibold text-gray-200">Notifications</span>
                 <span className="text-xs text-gray-600">{notifs.length} total</span>
@@ -154,7 +157,10 @@ export function TopNav({ onLogout }: TopNavProps) {
           </button>
 
           {showProfile && (
-            <div className="absolute right-0 top-12 w-52 bg-[#111827] border border-[#1a2035] rounded-xl shadow-2xl z-50 p-1">
+            <div
+              className="absolute right-0 top-12 w-52 rounded-xl z-50 p-1 border"
+              style={{ background: '#FBF4EC', borderColor: 'rgba(112,75,106,0.18)', boxShadow: '0 8px 32px -8px rgba(45,27,41,0.35)' }}
+            >
               {/* Header */}
               <div className="px-3 py-2.5 border-b border-[#1a2035] mb-1">
                 <div className="flex items-center gap-2 mb-2">

@@ -18,7 +18,7 @@ const deptData = [
 const kpis = [
   { label: 'Environmental Score', value: 78, prev: 75.5, icon: Leaf,     color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', bar: 'bg-emerald-500', topBorder: '#10B981' },
   { label: 'Social Score',        value: 82, prev: 80.5, icon: Users,    color: 'text-blue-400',    bg: 'bg-blue-500/10',   border: 'border-blue-500/20',   bar: 'bg-blue-500',   topBorder: '#3B82F6' },
-  { label: 'Governance Score',    value: 71, prev: 71.4, icon: Shield,   color: 'text-violet-400',  bg: 'bg-violet-500/10', border: 'border-violet-500/20', bar: 'bg-violet-500', topBorder: '#0E7490' },
+  { label: 'Governance Score',    value: 71, prev: 71.4, icon: Shield,   color: 'text-cyan-400',  bg: 'bg-cyan-500/10', border: 'border-cyan-500/20', bar: 'bg-cyan-500', topBorder: '#0E7490' },
   { label: 'Overall ESG Score',   value: 77, prev: 75.5, icon: BarChart3, color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20', bar: 'bg-orange-500', topBorder: 'gradient' },
 ];
 
@@ -562,7 +562,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
                 <td className="px-5 py-3.5 text-xs font-medium text-gray-200">{row.dept}</td>
                 <td className="px-5 py-3.5"><MiniBar value={row.env} color="bg-emerald-500" /></td>
                 <td className="px-5 py-3.5"><MiniBar value={row.social} color="bg-blue-500" /></td>
-                <td className="px-5 py-3.5"><MiniBar value={row.gov} color="bg-violet-500" /></td>
+                <td className="px-5 py-3.5"><MiniBar value={row.gov} color="bg-cyan-500" /></td>
                 <td className="px-5 py-3.5">
                   <span className={`text-sm font-bold ${row.overall >= 85 ? 'text-emerald-400' : row.overall >= 75 ? 'text-rose-400' : row.overall >= 65 ? 'text-orange-400' : 'text-red-400'}`}>
                     {row.overall}
