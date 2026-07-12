@@ -74,8 +74,9 @@ export function LoginPage({ onLogin }: LoginPageProps) {
         <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
 
         <div className="flex items-center gap-3 relative">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center">
-            <Leaf className="w-5 h-5 text-emerald-400" />
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+            style={{ background: 'rgba(112,75,106,0.16)', border: '1px solid rgba(112,75,106,0.32)' }}>
+            <Leaf className="w-5 h-5" style={{ color: '#704B6A' }} />
           </div>
           <div>
             <div className="text-base font-semibold text-white">EcoSphere</div>
@@ -129,8 +130,9 @@ export function LoginPage({ onLogin }: LoginPageProps) {
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-[380px]">
           <div className="lg:hidden flex items-center gap-2 mb-8">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center">
-              <Leaf className="w-4 h-4 text-emerald-400" />
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center"
+              style={{ background: 'rgba(112,75,106,0.16)', border: '1px solid rgba(112,75,106,0.32)' }}>
+              <Leaf className="w-4 h-4" style={{ color: '#704B6A' }} />
             </div>
             <span className="text-base font-semibold text-white">EcoSphere</span>
           </div>

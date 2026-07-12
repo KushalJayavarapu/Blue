@@ -19,21 +19,21 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { id: 'dashboard',     label: 'Dashboard',         icon: LayoutDashboard, managerOnly: true,
-    activeColor: '#714B67', activeBg: 'rgba(113,75,103,0.14)' },
+    activeColor: '#704B6A', activeBg: 'rgba(112,75,106,0.14)' },
   { id: 'environmental', label: 'Environmental',      icon: Leaf,
-    activeColor: '#10B981', activeBg: 'rgba(16,185,129,0.12)' },
+    activeColor: '#704B6A', activeBg: 'rgba(112,75,106,0.14)' },
   { id: 'social',        label: 'Explore Activities', icon: Users,
-    activeColor: '#3B82F6', activeBg: 'rgba(59,130,246,0.12)' },
+    activeColor: '#704B6A', activeBg: 'rgba(112,75,106,0.14)' },
   { id: 'governance',    label: 'Governance',         icon: Shield,
-    activeColor: '#8B5CF6', activeBg: 'rgba(139,92,246,0.12)' },
+    activeColor: '#704B6A', activeBg: 'rgba(112,75,106,0.14)' },
   { id: 'gamification',  label: 'Challenges',         icon: Trophy,
-    activeColor: '#F59E0B', activeBg: 'rgba(245,158,11,0.12)' },
+    activeColor: '#704B6A', activeBg: 'rgba(112,75,106,0.14)' },
   { id: 'simulator',     label: 'Simulator',          icon: FlaskConical,
-    activeColor: '#714B67', activeBg: 'rgba(113,75,103,0.14)' },
+    activeColor: '#704B6A', activeBg: 'rgba(112,75,106,0.14)' },
   { id: 'reports',       label: 'Reports',            icon: FileText,
-    activeColor: '#9CA3AF', activeBg: 'rgba(156,163,175,0.12)' },
+    activeColor: '#704B6A', activeBg: 'rgba(112,75,106,0.14)' },
   { id: 'settings',      label: 'Settings',           icon: Settings, managerOnly: true,
-    activeColor: '#714B67', activeBg: 'rgba(113,75,103,0.14)' },
+    activeColor: '#704B6A', activeBg: 'rgba(112,75,106,0.14)' },
 ];
 
 interface SidebarProps {
@@ -46,18 +46,20 @@ export function Sidebar({ currentPage, onNavigate, isDark }: SidebarProps) {
   const { isManager, user } = useRole();
   const visible = NAV_ITEMS.filter(item => !item.managerOnly || isManager);
 
-  const glass   = isDark ? 'rgba(20,10,18,0.84)' : 'rgba(255,251,249,0.78)';
-  const divider = isDark ? '1px solid rgba(113,75,103,0.22)' : '1px solid rgba(113,75,103,0.13)';
+  const glass   = isDark
+    ? 'linear-gradient(160deg, rgba(28,14,24,0.86) 0%, rgba(18,9,16,0.82) 100%)'
+    : 'linear-gradient(160deg, rgba(255,255,255,0.68) 0%, rgba(250,240,232,0.60) 100%)';
+  const divider = isDark ? '1px solid rgba(112,75,106,0.22)' : '1px solid rgba(112,75,106,0.14)';
 
   const textPrimary = isDark ? '#F0E5EB' : '#2D1B29';
   const textSub     = isDark ? '#9A7888' : '#9B7A8C';
   const textMuted   = isDark ? '#50384A' : '#C0A0B4';
   const navInactive = isDark ? '#7A6072' : '#9B7A8C';
-  const navHover    = isDark ? 'rgba(113,75,103,0.15)' : 'rgba(113,75,103,0.07)';
-  const orgBg       = isDark ? 'rgba(113,75,103,0.13)' : 'rgba(113,75,103,0.06)';
-  const orgBorder   = isDark ? 'rgba(113,75,103,0.28)' : 'rgba(113,75,103,0.16)';
-  const orgHover    = isDark ? 'rgba(113,75,103,0.22)' : 'rgba(113,75,103,0.11)';
-  const managerColor = isDark ? '#C490B0' : '#714B67';
+  const navHover    = isDark ? 'rgba(112,75,106,0.15)' : 'rgba(112,75,106,0.07)';
+  const orgBg       = isDark ? 'rgba(112,75,106,0.13)' : 'rgba(112,75,106,0.06)';
+  const orgBorder   = isDark ? 'rgba(112,75,106,0.28)' : 'rgba(112,75,106,0.16)';
+  const orgHover    = isDark ? 'rgba(112,75,106,0.22)' : 'rgba(112,75,106,0.11)';
+  const managerColor = isDark ? '#C490B0' : '#704B6A';
 
   return (
     <div
@@ -67,14 +69,15 @@ export function Sidebar({ currentPage, onNavigate, isDark }: SidebarProps) {
         backdropFilter: 'blur(24px) saturate(1.8)',
         WebkitBackdropFilter: 'blur(24px) saturate(1.8)',
         borderRight: divider,
+        boxShadow: isDark ? 'none' : 'inset -1px 0 0 rgba(255,255,255,0.5)',
       }}
     >
       {/* Brand */}
       <div className="px-4 py-5" style={{ borderBottom: divider }}>
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-            style={{ background: 'rgba(113,75,103,0.16)', border: '1px solid rgba(113,75,103,0.32)' }}>
-            <Leaf className="w-4 h-4" style={{ color: '#714B67' }} />
+            style={{ background: 'rgba(112,75,106,0.16)', border: '1px solid rgba(112,75,106,0.32)' }}>
+            <Leaf className="w-4 h-4" style={{ color: '#704B6A' }} />
           </div>
           <div>
             <div className="text-sm font-semibold leading-tight" style={{ color: textPrimary }}>EcoSphere</div>
@@ -92,7 +95,7 @@ export function Sidebar({ currentPage, onNavigate, isDark }: SidebarProps) {
           onMouseLeave={e => (e.currentTarget.style.background = orgBg)}
         >
           <div className="flex items-center gap-2">
-            <Building2 className="w-3.5 h-3.5" style={{ color: '#714B67' }} />
+            <Building2 className="w-3.5 h-3.5" style={{ color: '#704B6A' }} />
             <span className="text-xs font-medium" style={{ color: textPrimary }}>Acme Corporation</span>
           </div>
           <ChevronDown className="w-3 h-3" style={{ color: navInactive }} />
@@ -104,7 +107,7 @@ export function Sidebar({ currentPage, onNavigate, isDark }: SidebarProps) {
         <div
           className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-medium"
           style={isManager
-            ? { color: managerColor, background: 'rgba(113,75,103,0.1)', border: '1px solid rgba(113,75,103,0.22)' }
+            ? { color: managerColor, background: 'rgba(112,75,106,0.1)', border: '1px solid rgba(112,75,106,0.22)' }
             : { color: '#3B82F6',    background: 'rgba(59,130,246,0.1)',  border: '1px solid rgba(59,130,246,0.22)' }
           }
         >

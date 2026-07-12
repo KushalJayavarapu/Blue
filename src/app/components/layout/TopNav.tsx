@@ -69,10 +69,13 @@ export function TopNav({ onLogout, isDark, onToggleTheme }: TopNavProps) {
     <header
       className="h-14 flex items-center px-6 gap-4 shrink-0"
       style={{
-        background: isDark ? 'rgba(22,10,20,0.88)' : 'rgba(255,251,249,0.88)',
+        background: isDark
+          ? 'linear-gradient(180deg, rgba(26,12,22,0.90) 0%, rgba(22,10,20,0.86) 100%)'
+          : 'linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(250,240,232,0.70) 100%)',
         backdropFilter: 'blur(20px) saturate(1.8)',
         WebkitBackdropFilter: 'blur(20px) saturate(1.8)',
-        borderBottom: isDark ? '1px solid rgba(113,75,103,0.2)' : '1px solid rgba(113,75,103,0.12)',
+        borderBottom: isDark ? '1px solid rgba(112,75,106,0.2)' : '1px solid rgba(112,75,106,0.12)',
+        boxShadow: isDark ? 'none' : 'inset 0 -1px 0 rgba(255,255,255,0.5), inset 0 1px 0 rgba(255,255,255,0.6)',
       }}
     >
       {/* Search */}

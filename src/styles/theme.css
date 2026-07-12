@@ -3,25 +3,62 @@
 /* ═══════════════════════════════════════════════
    LIGHT / DARK MODE THEME TOKENS
    data-theme="dark"  → default (dark navy palette)
-   data-theme="light" → light slate palette
+   data-theme="light" → liquid-glass cream palette (brand: #704B6A)
 ═══════════════════════════════════════════════ */
 
-/* ---------- BACKGROUNDS (cream palette) ---------- */
-[data-theme="light"] .bg-\[\#0b0f1a\] { background-color: #F4EBE2 !important; }
-[data-theme="light"] .bg-\[\#0d1222\] { background-color: #FDFAF7 !important; }
-[data-theme="light"] .bg-\[\#111827\] { background-color: #FAF4EF !important; }
-[data-theme="light"] .bg-\[\#1a2035\] { background-color: #EFE4DA !important; }
-[data-theme="light"] .bg-\[\#1e2533\] { background-color: #E8DDD2 !important; }
-[data-theme="light"] .bg-\[\#2a3550\] { background-color: #DFCFC4 !important; }
+/* ---------- LIQUID GLASS SURFACES (cream + white, frosted) ---------- */
+/* Deepest / page-level panels — most transparent, heaviest blur */
+[data-theme="light"] .bg-\[\#0b0f1a\] {
+  background: linear-gradient(180deg, rgba(255,255,255,0.60) 0%, rgba(250,240,232,0.50) 100%) !important;
+  backdrop-filter: blur(28px) saturate(1.9);
+  -webkit-backdrop-filter: blur(28px) saturate(1.9);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.65);
+}
+[data-theme="light"] .bg-\[\#0d1222\] {
+  background: linear-gradient(180deg, rgba(255,255,255,0.66) 0%, rgba(250,241,233,0.56) 100%) !important;
+  backdrop-filter: blur(24px) saturate(1.85);
+  -webkit-backdrop-filter: blur(24px) saturate(1.85);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+}
+/* Card-level surfaces — the ones users see most (KPI cards, panels, dropdowns) */
+[data-theme="light"] .bg-\[\#111827\] {
+  background: linear-gradient(160deg, rgba(255,255,255,0.72) 0%, rgba(248,238,230,0.60) 100%) !important;
+  backdrop-filter: blur(20px) saturate(1.8);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 8px 30px -12px rgba(112,75,106,0.18);
+}
+/* Nested / secondary surfaces — slightly more opaque cream */
+[data-theme="light"] .bg-\[\#1a2035\] {
+  background: linear-gradient(160deg, rgba(250,240,232,0.85) 0%, rgba(240,224,212,0.78) 100%) !important;
+  backdrop-filter: blur(14px) saturate(1.6);
+  -webkit-backdrop-filter: blur(14px) saturate(1.6);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.55);
+}
+[data-theme="light"] .bg-\[\#1e2533\] {
+  background: rgba(238,222,209,0.88) !important;
+  backdrop-filter: blur(12px) saturate(1.5);
+  -webkit-backdrop-filter: blur(12px) saturate(1.5);
+}
+[data-theme="light"] .bg-\[\#2a3550\] {
+  background: rgba(228,207,201,0.9) !important;
+  backdrop-filter: blur(10px) saturate(1.5);
+  -webkit-backdrop-filter: blur(10px) saturate(1.5);
+}
 
-/* ---------- HOVER BACKGROUNDS (cream) ---------- */
-[data-theme="light"] .hover\:bg-\[\#111827\]:hover { background-color: #F0E9E2 !important; }
-[data-theme="light"] .hover\:bg-\[\#1a2035\]:hover { background-color: #E8DDD2 !important; }
+/* ---------- HOVER BACKGROUNDS (warm glass, slightly more opaque on hover) ---------- */
+[data-theme="light"] .hover\:bg-\[\#111827\]:hover {
+  background: linear-gradient(160deg, rgba(255,255,255,0.85) 0%, rgba(249,238,231,0.78) 100%) !important;
+}
+[data-theme="light"] .hover\:bg-\[\#1a2035\]:hover {
+  background: rgba(243,229,220,0.92) !important;
+}
 
-/* ---------- BORDERS (warm mauve) ---------- */
-[data-theme="light"] .border-\[\#1a2035\] { border-color: rgba(113,75,103,0.18) !important; }
-[data-theme="light"] .border-\[\#2a3550\] { border-color: rgba(113,75,103,0.28) !important; }
-[data-theme="light"] .focus\:border-\[\#2a3550\]:focus { border-color: #714B67 !important; }
+/* ---------- BORDERS (brand mauve #704B6A, translucent) ---------- */
+[data-theme="light"] .border-\[\#1a2035\] { border-color: rgba(112,75,106,0.16) !important; }
+[data-theme="light"] .border-\[\#2a3550\] { border-color: rgba(112,75,106,0.30) !important; }
+[data-theme="light"] .focus\:border-\[\#2a3550\]:focus { border-color: #704B6A !important; }
+[data-theme="light"] .focus\:border-emerald-500\/50:focus { border-color: rgba(112,75,106,0.55) !important; }
+[data-theme="light"] .focus\:ring-emerald-500\/15:focus { --tw-ring-color: rgba(112,75,106,0.15) !important; }
 
 /* ---------- TEXT — warm darks ---------- */
 [data-theme="light"] .text-white { color: #2D1B29 !important; }
@@ -29,6 +66,58 @@
 [data-theme="light"] .text-gray-200 { color: #4A3040 !important; }
 [data-theme="light"] .text-gray-300 { color: #6B4A5A !important; }
 /* gray-400 through gray-700 are already legible on cream — leave untouched */
+
+/* ---------- Sign-in CTA and other violet brand buttons → liquid glass mauve ---------- */
+.bg-violet-600 {
+  background: linear-gradient(160deg, #7E5578 0%, #704B6A 55%, #5C3D57 100%) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 6px 20px -6px rgba(112,75,106,0.55) !important;
+}
+.hover\:bg-violet-500:hover {
+  background: linear-gradient(160deg, #8F6389 0%, #7E5578 55%, #684459 100%) !important;
+}
+
+/* ---------- ALL other solid CTA buttons (Join / Approve / Create / etc.) → same purple glass ---------- */
+[data-theme="light"] .bg-blue-600,
+[data-theme="light"] .bg-emerald-600,
+[data-theme="light"] .bg-amber-600,
+[data-theme="light"] .bg-orange-600 {
+  background: linear-gradient(160deg, #7E5578 0%, #704B6A 55%, #5C3D57 100%) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 6px 20px -6px rgba(112,75,106,0.55) !important;
+  border-color: transparent !important;
+}
+[data-theme="light"] .hover\:bg-blue-500:hover,
+[data-theme="light"] .hover\:bg-emerald-500:hover,
+[data-theme="light"] .hover\:bg-amber-500:hover,
+[data-theme="light"] .hover\:bg-orange-500:hover {
+  background: linear-gradient(160deg, #8F6389 0%, #7E5578 55%, #684459 100%) !important;
+}
+[data-theme="light"] .hover\:bg-blue-600:hover,
+[data-theme="light"] .hover\:bg-amber-600:hover {
+  background: #5C3D57 !important;
+}
+
+/* ---------- Active tab pills (CSR Activities / Employee Participation / etc.) ---------- */
+[data-theme="light"] .bg-blue-600\/90,
+[data-theme="light"] .bg-emerald-600\/90,
+[data-theme="light"] .bg-amber-600\/90,
+[data-theme="light"] .bg-violet-600\/90 {
+  background: rgba(112,75,106,0.92) !important;
+  color: #ffffff !important;
+}
+
+/* ---------- Ghost / outline secondary buttons (Import Data, filter chips) ---------- */
+[data-theme="light"] .bg-blue-600\/15,
+[data-theme="light"] .bg-amber-600\/20 {
+  background: rgba(112,75,106,0.12) !important;
+  border-color: rgba(112,75,106,0.28) !important;
+}
+[data-theme="light"] .hover\:bg-blue-600\/25:hover,
+[data-theme="light"] .hover\:bg-amber-600\/30:hover {
+  background: rgba(112,75,106,0.22) !important;
+}
+
+/* ---------- Toggle switches ("on" state) ---------- */
+[data-theme="light"] .bg-emerald-600 { background: #704B6A !important; }
 
 /* ---------- BUTTONS — colored bg always keeps white text in light mode ---------- */
 [data-theme="light"] .bg-violet-600,
@@ -51,50 +140,59 @@
 /* ---------- SVG chart elements ---------- */
 [data-theme="light"] rect[fill="#1a2035"] { fill: #e8edf5; }
 
-/* ---------- SCROLLBAR (light cream) ---------- */
-[data-theme="light"] ::-webkit-scrollbar-track { background: #EFE4DA; }
-[data-theme="light"] ::-webkit-scrollbar-thumb { background: rgba(113,75,103,0.3); }
-[data-theme="light"] ::-webkit-scrollbar-thumb:hover { background: rgba(113,75,103,0.5); }
+/* ---------- SCROLLBAR (light cream, brand mauve thumb) ---------- */
+[data-theme="light"] ::-webkit-scrollbar-track { background: #F0E5DA; }
+[data-theme="light"] ::-webkit-scrollbar-thumb { background: rgba(112,75,106,0.3); border-radius: 8px; }
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover { background: rgba(112,75,106,0.5); }
+
+/* ---------- Liquid-glass helper class (available for new markup) ---------- */
+.glass-panel {
+  background: linear-gradient(160deg, rgba(255,255,255,0.55) 0%, rgba(250,240,232,0.42) 100%);
+  backdrop-filter: blur(22px) saturate(1.85);
+  -webkit-backdrop-filter: blur(22px) saturate(1.85);
+  border: 1px solid rgba(112,75,106,0.18);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 8px 32px -12px rgba(112,75,106,0.22);
+}
 
 :root {
   --font-size: 16px;
-  --background: #ffffff;
-  --foreground: oklch(0.145 0 0);
-  --card: #ffffff;
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: #030213;
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.95 0.0058 264.53);
-  --secondary-foreground: #030213;
-  --muted: #ececf0;
-  --muted-foreground: #717182;
-  --accent: #e9ebef;
-  --accent-foreground: #030213;
+  --background: #FBF4EC;
+  --foreground: #2D1B29;
+  --card: rgba(255,255,255,0.65);
+  --card-foreground: #2D1B29;
+  --popover: rgba(255,255,255,0.85);
+  --popover-foreground: #2D1B29;
+  --primary: #704B6A;
+  --primary-foreground: #ffffff;
+  --secondary: #F0E2D6;
+  --secondary-foreground: #704B6A;
+  --muted: #F0E5DA;
+  --muted-foreground: #8A6B7E;
+  --accent: #EADFD3;
+  --accent-foreground: #704B6A;
   --destructive: #d4183d;
   --destructive-foreground: #ffffff;
-  --border: rgba(0, 0, 0, 0.1);
+  --border: rgba(112, 75, 106, 0.16);
   --input: transparent;
-  --input-background: #f3f3f5;
-  --switch-background: #cbced4;
+  --input-background: #FAF3EC;
+  --switch-background: #D8C4CE;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --ring: oklch(0.708 0 0);
+  --ring: #704B6A;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: #030213;
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --radius: 0.75rem;
+  --sidebar: rgba(255,251,249,0.78);
+  --sidebar-foreground: #2D1B29;
+  --sidebar-primary: #704B6A;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #F0E2D6;
+  --sidebar-accent-foreground: #704B6A;
+  --sidebar-border: rgba(112, 75, 106, 0.16);
+  --sidebar-ring: #704B6A;
 }
 
 .dark {

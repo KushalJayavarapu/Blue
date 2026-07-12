@@ -22,7 +22,7 @@ export default function App() {
   const [authed, setAuthed] = useState(false);
   const [role, setRole] = useState<UserRole>('manager');
   const [page, setPage] = useState<Page>('dashboard');
-  const [isDark, setIsDark] = useState(true);
+  const [isDark, setIsDark] = useState(false);
   const [employeeProfile, setEmployeeProfile] = useState<UserProfile>(EMPLOYEE_PROFILE);
   const [managerProfile, setManagerProfile] = useState<UserProfile>(MANAGER_PROFILE);
 
@@ -84,8 +84,8 @@ export default function App() {
         className="flex min-h-screen"
         style={{
           background: isDark
-            ? 'radial-gradient(ellipse at 18% 55%, rgba(113,75,103,0.24) 0%, transparent 52%), radial-gradient(ellipse at 82% 12%, rgba(113,75,103,0.13) 0%, transparent 42%), #1C1016'
-            : 'radial-gradient(ellipse at 18% 55%, rgba(113,75,103,0.11) 0%, transparent 52%), radial-gradient(ellipse at 82% 12%, rgba(240,220,200,0.7) 0%, transparent 42%), #F4EBE2',
+            ? 'radial-gradient(ellipse at 18% 55%, rgba(112,75,106,0.24) 0%, transparent 52%), radial-gradient(ellipse at 82% 12%, rgba(112,75,106,0.13) 0%, transparent 42%), #1C1016'
+            : 'radial-gradient(ellipse at 15% 20%, rgba(112,75,106,0.16) 0%, transparent 45%), radial-gradient(ellipse at 85% 15%, rgba(112,75,106,0.10) 0%, transparent 40%), radial-gradient(ellipse at 50% 100%, rgba(255,255,255,0.9) 0%, transparent 55%), linear-gradient(160deg, #FDF8F2 0%, #F6EAE0 50%, #F1E1D6 100%)',
           color: isDark ? '#F0E5EB' : '#2D1B29',
           fontFamily: "'Geist', -apple-system, BlinkMacSystemFont, sans-serif",
         }}
