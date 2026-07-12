@@ -1,0 +1,9 @@
+department_id,name,code,status
+1,Engineering,ENG,Active
+2,Manufacturing,MFG,Active
+3,Logistics,LOG,Active
+4,HR,HR,Active
+5,Procurement,PROC,Active
+6,Sales,SAL,Active
+7,Finance,FIN,Active
+8,Operations,OPS,Active

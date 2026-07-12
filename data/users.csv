@@ -1,0 +1,61 @@
+user_id,name,role,department,email,status
+1,Alla Harshit Reddy,Employee,Procurement,alla.harshit.reddy@ecosphere.com,Active
+2,Casey Davis,Employee,Logistics,casey.davis@ecosphere.com,Active
+3,Taylor Thomas,Employee,Manufacturing,taylor.thomas@ecosphere.com,Active
+4,Noah Taylor,Employee,Engineering,noah.taylor@ecosphere.com,Active
+5,Alex Johnson,Employee,HR,alex.johnson@ecosphere.com,Active
+6,Casey Thomas,Employee,Engineering,casey.thomas@ecosphere.com,Active
+7,Ethan Davis,Employee,Finance,ethan.davis@ecosphere.com,Active
+8,Casey Anderson,Employee,Procurement,casey.anderson@ecosphere.com,Active
+9,Alex Brown,Employee,Finance,alex.brown@ecosphere.com,Active
+10,Harshit Wilson,Employee,Logistics,harshit.wilson@ecosphere.com,Active
+11,Jamie Moore,Employee,Manufacturing,jamie.moore@ecosphere.com,Active
+12,Jordan Taylor,Employee,Manufacturing,jordan.taylor@ecosphere.com,Active
+13,Sarah Moore,Employee,Procurement,sarah.moore@ecosphere.com,Active
+14,Sam Anderson,Employee,Manufacturing,sam.anderson@ecosphere.com,Active
+15,Emma Johnson,Employee,Procurement,emma.johnson@ecosphere.com,Active
+16,Mia Moore,Employee,HR,mia.moore@ecosphere.com,Active
+17,Jordan Smith,Employee,HR,jordan.smith@ecosphere.com,Active
+18,Avery Johnson,Employee,HR,avery.johnson@ecosphere.com,Active
+19,Taylor Taylor,Employee,Procurement,taylor.taylor@ecosphere.com,Active
+20,Liam Moore,Employee,Logistics,liam.moore@ecosphere.com,Active
+21,Sarah Moore,Employee,HR,sarah.moore@ecosphere.com,Active
+22,Riley Johnson,Employee,Logistics,riley.johnson@ecosphere.com,Active
+23,Ethan Davis,Employee,Logistics,ethan.davis@ecosphere.com,Active
+24,Liam Taylor,Employee,Procurement,liam.taylor@ecosphere.com,Active
+25,Ethan Davis,Employee,Sales,ethan.davis@ecosphere.com,Active
+26,Sam Davis,Employee,Engineering,sam.davis@ecosphere.com,Active
+27,Harshit Taylor,Employee,Procurement,harshit.taylor@ecosphere.com,Active
+28,Jordan Davis,Employee,Sales,jordan.davis@ecosphere.com,Active
+29,Jamie Anderson,Employee,Finance,jamie.anderson@ecosphere.com,Active
+30,Liam Brown,Employee,Procurement,liam.brown@ecosphere.com,Active
+31,Chris Davis,Employee,Procurement,chris.davis@ecosphere.com,Active
+32,Noah Taylor,Employee,Finance,noah.taylor@ecosphere.com,Active
+33,Sarah Davis,Employee,Logistics,sarah.davis@ecosphere.com,Active
+34,James Anderson,Employee,Manufacturing,james.anderson@ecosphere.com,Active
+35,Sam Johnson,Employee,Logistics,sam.johnson@ecosphere.com,Active
+36,Morgan Taylor,Employee,Manufacturing,morgan.taylor@ecosphere.com,Active
+37,Emma Taylor,Employee,Operations,emma.taylor@ecosphere.com,Active
+38,James Wilson,Employee,Engineering,james.wilson@ecosphere.com,Active
+39,Taylor Thomas,Employee,Procurement,taylor.thomas@ecosphere.com,Active
+40,Harshit Johnson,Employee,Procurement,harshit.johnson@ecosphere.com,Active
+41,Olivia Brown,Employee,Operations,olivia.brown@ecosphere.com,Active
+42,Alex Wilson,Employee,Logistics,alex.wilson@ecosphere.com,Active
+43,James Johnson,Employee,Procurement,james.johnson@ecosphere.com,Active
+44,James Martin,Employee,HR,james.martin@ecosphere.com,Active
+45,Chris Moore,Employee,Logistics,chris.moore@ecosphere.com,Active
+46,Ethan Thomas,Manager,Engineering,ethan.thomas@ecosphere.com,Active
+47,Mia Moore,Manager,Operations,mia.moore@ecosphere.com,Active
+48,Alex Johnson,Manager,Sales,alex.johnson@ecosphere.com,Active
+49,Avery Davis,Manager,Engineering,avery.davis@ecosphere.com,Active
+50,Casey Martin,Manager,Manufacturing,casey.martin@ecosphere.com,Active
+51,Jordan Anderson,Manager,Manufacturing,jordan.anderson@ecosphere.com,Active
+52,Ethan Brown,Manager,Logistics,ethan.brown@ecosphere.com,Active
+53,Sophia Thomas,Manager,Logistics,sophia.thomas@ecosphere.com,Active
+54,Riley Thomas,ESG Manager,Finance,riley.thomas@ecosphere.com,Active
+55,Jamie Thomas,ESG Manager,HR,jamie.thomas@ecosphere.com,Active
+56,Avery Taylor,ESG Manager,Sales,avery.taylor@ecosphere.com,Active
+57,Liam Thomas,ESG Manager,Operations,liam.thomas@ecosphere.com,Active
+58,Taylor Davis,Admin,HR,taylor.davis@ecosphere.com,Active
+59,Jordan Moore,Admin,Engineering,jordan.moore@ecosphere.com,Active
+60,Noah Thomas,Admin,HR,noah.thomas@ecosphere.com,Active

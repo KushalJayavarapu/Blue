@@ -1,13 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { Search, Bell, LogOut, User, ChevronDown, Sun, Moon, Star } from 'lucide-react';
+import { Search, Bell, LogOut, User, ChevronDown, Star } from 'lucide-react';
 import { useRole } from '../../context/RoleContext';
 import { ProfileModal } from '../ProfileModal';
 import type { Page } from './Sidebar';
 
 interface TopNavProps {
   onLogout: () => void;
-  isDark: boolean;
-  onToggleTheme: () => void;
 }
 
 type Notif = { title: string; desc: string; time: string; color: string; dot: string; page: Page };
@@ -23,7 +21,7 @@ const EMPLOYEE_NOTIFS: Notif[] = [
   { title: 'Participation approved!', desc: 'Your Tree Planting Drive submission was approved', time: '10m ago', color: 'text-emerald-400', dot: 'bg-emerald-500', page: 'social' },
   { title: 'New challenge available', desc: 'Zero Waste Week Challenge — 300 XP reward', time: '2h ago', color: 'text-orange-400', dot: 'bg-orange-500', page: 'gamification' },
   { title: 'Policy acknowledgement due', desc: 'Data Privacy Policy v2.0 — deadline Dec 15', time: '4h ago', color: 'text-violet-400', dot: 'bg-violet-500', page: 'governance' },
-  { title: 'Points milestone', desc: 'You crossed 1,000 points — new badge unlocked!', time: '1d ago', color: 'text-yellow-400', dot: 'bg-yellow-500', page: 'gamification' },
+  { title: 'Points milestone', desc: 'You crossed 1,000 points — new badge unlocked!', time: '1d ago', color: 'text-orange-400', dot: 'bg-orange-500', page: 'gamification' },
 ];
 
 const PAGE_LABELS: Partial<Record<Page, string>> = {
@@ -34,7 +32,7 @@ const PAGE_LABELS: Partial<Record<Page, string>> = {
   reports: 'Reports',
 };
 
-export function TopNav({ onLogout, isDark, onToggleTheme }: TopNavProps) {
+export function TopNav({ onLogout }: TopNavProps) {
   const { user, onNavigate } = useRole();
   const [showNotifs, setShowNotifs] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
@@ -67,12 +65,13 @@ export function TopNav({ onLogout, isDark, onToggleTheme }: TopNavProps) {
   return (
     <>
     <header
-      className="h-14 flex items-center px-6 gap-4 shrink-0"
+      className="h-14 flex items-center px-6 gap-4 shrink-0 relative z-30"
       style={{
-        background: isDark ? 'rgba(22,10,20,0.88)' : 'rgba(255,251,249,0.88)',
+        background: 'linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(250,240,232,0.70) 100%)',
         backdropFilter: 'blur(20px) saturate(1.8)',
         WebkitBackdropFilter: 'blur(20px) saturate(1.8)',
-        borderBottom: isDark ? '1px solid rgba(113,75,103,0.2)' : '1px solid rgba(113,75,103,0.12)',
+        borderBottom: '1px solid rgba(112,75,106,0.12)',
+        boxShadow: 'inset 0 -1px 0 rgba(255,255,255,0.5), inset 0 1px 0 rgba(255,255,255,0.6)',
       }}
     >
       {/* Search */}
@@ -88,24 +87,6 @@ export function TopNav({ onLogout, isDark, onToggleTheme }: TopNavProps) {
       </div>
 
       <div className="flex items-center gap-1 ml-auto">
-        {/* Theme toggle */}
-        <button
-          onClick={onToggleTheme}
-          title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-          className="relative flex items-center gap-1 px-1 py-1 rounded-xl transition-all duration-300 bg-[#111827] border border-[#1a2035] hover:border-[#2a3550]"
-          style={{ minWidth: 60 }}
-        >
-          <span className={`flex items-center justify-center w-6 h-6 rounded-lg transition-all duration-300 ${!isDark ? 'bg-amber-500/20 text-amber-400' : 'text-gray-600'}`}>
-            <Sun className="w-3.5 h-3.5" />
-          </span>
-          <span className={`flex items-center justify-center w-6 h-6 rounded-lg transition-all duration-300 ${isDark ? 'bg-blue-500/20 text-blue-400' : 'text-gray-600'}`}>
-            <Moon className="w-3.5 h-3.5" />
-          </span>
-          <span className={`absolute top-1 w-6 h-6 rounded-lg transition-all duration-300 pointer-events-none ${isDark ? 'translate-x-[30px] bg-blue-500/15 border border-blue-500/30' : 'translate-x-[2px] bg-amber-500/15 border border-amber-500/30'}`} />
-        </button>
-
-        <div className="w-px h-5 bg-[#1a2035] mx-1" />
-
         {/* Notifications */}
         <div className="relative" ref={notifsRef}>
           <button
@@ -117,7 +98,10 @@ export function TopNav({ onLogout, isDark, onToggleTheme }: TopNavProps) {
           </button>
 
           {showNotifs && (
-            <div className="absolute right-0 top-10 w-80 bg-[#111827] border border-[#1a2035] rounded-xl shadow-2xl z-50 overflow-hidden">
+            <div
+              className="absolute right-0 top-10 w-80 rounded-xl z-50 overflow-hidden border"
+              style={{ background: '#FBF4EC', borderColor: 'rgba(112,75,106,0.18)', boxShadow: '0 8px 32px -8px rgba(45,27,41,0.35)' }}
+            >
               <div className="px-4 py-3 border-b border-[#1a2035] flex items-center justify-between">
                 <span className="text-xs font-semibold text-gray-200">Notifications</span>
                 <span className="text-xs text-gray-600">{notifs.length} total</span>
@@ -165,15 +149,18 @@ export function TopNav({ onLogout, isDark, onToggleTheme }: TopNavProps) {
               <div className="text-xs font-medium text-gray-300 leading-tight">{user.name}</div>
               {/* Points row — always visible */}
               <div className="flex items-center gap-1 mt-px">
-                <Star className="w-2.5 h-2.5 text-yellow-500" style={{ minWidth: 10 }} />
-                <span className="text-[10px] text-yellow-500 font-semibold leading-none">{user.points.toLocaleString()} pts</span>
+                <Star className="w-2.5 h-2.5 text-orange-500" style={{ minWidth: 10 }} />
+                <span className="text-[10px] text-orange-500 font-semibold leading-none">{user.points.toLocaleString()} pts</span>
               </div>
             </div>
             <ChevronDown className="w-3 h-3 text-gray-600 ml-0.5" />
           </button>
 
           {showProfile && (
-            <div className="absolute right-0 top-12 w-52 bg-[#111827] border border-[#1a2035] rounded-xl shadow-2xl z-50 p-1">
+            <div
+              className="absolute right-0 top-12 w-52 rounded-xl z-50 p-1 border"
+              style={{ background: '#FBF4EC', borderColor: 'rgba(112,75,106,0.18)', boxShadow: '0 8px 32px -8px rgba(45,27,41,0.35)' }}
+            >
               {/* Header */}
               <div className="px-3 py-2.5 border-b border-[#1a2035] mb-1">
                 <div className="flex items-center gap-2 mb-2">
@@ -201,7 +188,7 @@ export function TopNav({ onLogout, isDark, onToggleTheme }: TopNavProps) {
               {/* Stats */}
               <div className="grid grid-cols-3 gap-1 px-2 py-2 border-b border-[#1a2035] mb-1">
                 {[
-                  { label: 'Points', value: user.points.toLocaleString(), color: 'text-yellow-400' },
+                  { label: 'Points', value: user.points.toLocaleString(), color: 'text-orange-400' },
                   { label: 'Level', value: `Lv ${user.level}`, color: 'text-blue-400' },
                   { label: 'Badges', value: String(user.badges), color: 'text-violet-400' },
                 ].map(s => (

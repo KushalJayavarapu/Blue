@@ -1,0 +1,26 @@
+activity_id,title,category,department,location,date,participants,capacity,points,status
+1,Tree Plantation Drive,Environment,Manufacturing,Location 1,2026-08-08,33,100,30,Upcoming
+2,Beach Cleanup,Community,HR,Location 2,2026-10-22,9,50,75,Upcoming
+3,Blood Donation Camp,Recycling,Operations,Location 3,2026-09-26,21,100,75,Ongoing
+4,E-Waste Collection,Environment,Finance,Location 4,2026-10-14,11,40,75,Ongoing
+5,Plastic-Free Campus,Recycling,Manufacturing,Location 5,2026-08-13,26,30,50,Upcoming
+6,Water Workshop,CSR,Operations,Location 6,2026-09-14,17,40,40,Ongoing
+7,Food Drive,Environment,Operations,Location 7,2026-12-04,36,75,30,Completed
+8,Green Office,Environment,HR,Location 8,2026-09-14,6,100,75,Ongoing
+9,Cycle to Work,Environment,Logistics,Location 9,2026-11-01,30,40,75,Ongoing
+10,Lake Cleanup,Training,Operations,Location 10,2026-09-07,41,75,50,Upcoming
+11,Solar Awareness,Recycling,Engineering,Location 11,2026-10-02,23,30,30,Completed
+12,Paperless Week,Community,Logistics,Location 12,2026-08-17,69,75,30,Upcoming
+13,Skill Training,Environment,HR,Location 13,2026-11-04,24,30,100,Upcoming
+14,Recycling Marathon,Environment,Manufacturing,Location 14,2026-11-22,81,100,100,Completed
+15,Compost Workshop,Health,HR,Location 15,2026-10-08,45,100,50,Ongoing
+16,School Outreach,Training,Sales,Location 16,2026-08-01,24,40,75,Completed
+17,Health Camp,Environment,HR,Location 17,2026-12-09,17,100,40,Ongoing
+18,Energy Audit,Health,Procurement,Location 18,2026-09-15,12,30,100,Completed
+19,Rainwater Campaign,Recycling,Engineering,Location 19,2026-12-10,44,50,30,Upcoming
+20,Eco Fair,Environment,Logistics,Location 20,2026-10-10,12,50,100,Upcoming
+21,CSR Hackday,Recycling,Procurement,Location 21,2026-12-16,18,50,50,Upcoming
+22,Clean Air Walk,Training,Procurement,Location 22,2026-08-01,25,30,50,Upcoming
+23,River Cleanup,Recycling,Operations,Location 23,2026-12-23,15,50,75,Completed
+24,Green Coding,Environment,Logistics,Location 24,2026-12-02,8,30,50,Completed
+25,Community Garden,Training,Logistics,Location 25,2026-08-10,23,100,50,Upcoming

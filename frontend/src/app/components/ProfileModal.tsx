@@ -152,7 +152,7 @@ export function ProfileModal({ onClose }: ProfileModalProps) {
         {/* Stats strip */}
         <div className="mx-6 mb-5 grid grid-cols-3 gap-2 bg-[#111827] border border-[#1a2035] rounded-xl p-3">
           {[
-            { label: 'Points', value: user.points.toLocaleString(), icon: Star, color: 'text-yellow-400' },
+            { label: 'Points', value: user.points.toLocaleString(), icon: Star, color: 'text-orange-400' },
             { label: `Level ${user.level}`, value: `${user.xp.toLocaleString()} XP`, icon: Zap, color: 'text-blue-400' },
             { label: 'Badges', value: String(user.badges), icon: Award, color: 'text-violet-400' },
           ].map(s => {
@@ -199,7 +199,7 @@ export function ProfileModal({ onClose }: ProfileModalProps) {
               className="w-full px-3.5 py-2.5 bg-[#111827] border border-[#1a2035] rounded-xl text-sm text-gray-200 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/15 transition-all appearance-none cursor-pointer"
             >
               {DEPT_OPTIONS.map(d => (
-                <option key={d} value={d} style={{ background: '#111827' }}>{d}</option>
+                <option key={d} value={d}>{d}</option>
               ))}
             </select>
           </div>

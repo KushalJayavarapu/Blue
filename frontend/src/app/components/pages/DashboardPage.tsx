@@ -18,7 +18,7 @@ const deptData = [
 const kpis = [
   { label: 'Environmental Score', value: 78, prev: 75.5, icon: Leaf,     color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', bar: 'bg-emerald-500', topBorder: '#10B981' },
   { label: 'Social Score',        value: 82, prev: 80.5, icon: Users,    color: 'text-blue-400',    bg: 'bg-blue-500/10',   border: 'border-blue-500/20',   bar: 'bg-blue-500',   topBorder: '#3B82F6' },
-  { label: 'Governance Score',    value: 71, prev: 71.4, icon: Shield,   color: 'text-violet-400',  bg: 'bg-violet-500/10', border: 'border-violet-500/20', bar: 'bg-violet-500', topBorder: '#8B5CF6' },
+  { label: 'Governance Score',    value: 71, prev: 71.4, icon: Shield,   color: 'text-cyan-400',  bg: 'bg-cyan-500/10', border: 'border-cyan-500/20', bar: 'bg-cyan-500', topBorder: '#0E7490' },
   { label: 'Overall ESG Score',   value: 77, prev: 75.5, icon: BarChart3, color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20', bar: 'bg-orange-500', topBorder: 'gradient' },
 ];
 
@@ -135,11 +135,11 @@ function DeptRankBarChart({ data }: { data: typeof deptData }) {
         const isHov = hovered === i;
         return (
           <g key={d.dept} onMouseEnter={() => setHovered(i)} onMouseLeave={() => setHovered(null)} style={{ cursor: 'pointer' }}>
-            <text x={padL - 6} y={yPos + barH - 1} textAnchor="end" fill={isHov ? '#a78bfa' : '#6b7280'} fontSize={10}>{d.dept}</text>
+            <text x={padL - 6} y={yPos + barH - 1} textAnchor="end" fill={isHov ? '#22d3ee' : '#6b7280'} fontSize={10}>{d.dept}</text>
             <rect x={padL} y={yPos} width={W - padL - padR} height={barH} rx={5} fill="#1a2035" />
-            <rect x={padL} y={yPos} width={barW} height={barH} rx={5} fill={isHov ? '#a78bfa' : '#8b5cf6'}
+            <rect x={padL} y={yPos} width={barW} height={barH} rx={5} fill={isHov ? '#22d3ee' : '#0e7490'}
               style={{ transition: 'fill .12s' }} />
-            <text x={padL + barW + 4} y={yPos + barH - 1} fill={isHov ? '#a78bfa' : '#8b5cf6'} fontSize={9}>{d.score}</text>
+            <text x={padL + barW + 4} y={yPos + barH - 1} fill={isHov ? '#22d3ee' : '#0e7490'} fontSize={9}>{d.score}</text>
             {/* invisible hit target covering whole row */}
             <rect x={0} y={yPos - 4} width={W} height={barH + 8} fill="transparent" />
             {isHov && (() => {
@@ -149,7 +149,7 @@ function DeptRankBarChart({ data }: { data: typeof deptData }) {
                 <g>
                   <rect x={tx} y={ty} width={tipW} height={tipH} rx={5} fill="#1a2035" stroke="#2a3550" strokeWidth={1} />
                   <text x={tx + tipW / 2} y={ty + 11} textAnchor="middle" fill="#9ca3af" fontSize={8.5}>{d.dept} Department</text>
-                  <text x={tx + tipW / 2} y={ty + 24} textAnchor="middle" fill="#a78bfa" fontSize={11} fontWeight="600">ESG Score: {d.score}/100</text>
+                  <text x={tx + tipW / 2} y={ty + 24} textAnchor="middle" fill="#22d3ee" fontSize={11} fontWeight="600">ESG Score: {d.score}/100</text>
                 </g>
               );
             })()}
@@ -204,7 +204,7 @@ function EmployeeDashboard({ onNavigate }: { onNavigate: (page: Page) => void })
       {/* Personal KPI row */}
       <div className="grid grid-cols-4 gap-4">
         {[
-          { label: 'ESG Points', value: user.points.toLocaleString(), icon: Star, color: 'text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20', sub: '+140 this week' },
+          { label: 'ESG Points', value: user.points.toLocaleString(), icon: Star, color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20', sub: '+140 this week' },
           { label: 'XP Earned', value: user.xp.toLocaleString(), icon: Zap, color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20', sub: `Level ${user.level}` },
           { label: 'Badges Earned', value: String(user.badges), icon: Award, color: 'text-violet-400', bg: 'bg-violet-500/10', border: 'border-violet-500/20', sub: '2 more available' },
           { label: 'Challenges Joined', value: '3', icon: Trophy, color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20', sub: '1 completing soon' },
@@ -292,7 +292,7 @@ function EmployeeDashboard({ onNavigate }: { onNavigate: (page: Page) => void })
                   <span className="text-xs font-medium text-gray-200">{c.name}</span>
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] text-gray-600">Due {c.deadline}</span>
-                    <span className="text-[11px] text-amber-400 font-semibold">+{c.xp} XP</span>
+                    <span className="text-[11px] text-orange-400 font-semibold">+{c.xp} XP</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -333,7 +333,7 @@ function EmployeeDashboard({ onNavigate }: { onNavigate: (page: Page) => void })
         <div className="bg-[#0d1222] border border-[#1a2035] rounded-2xl p-5">
           <h3 className="text-sm font-semibold text-white mb-4">Reward Balance</h3>
           <div className="text-center mb-4">
-            <div className="text-3xl font-bold text-yellow-400">{user.points.toLocaleString()}</div>
+            <div className="text-3xl font-bold text-orange-400">{user.points.toLocaleString()}</div>
             <div className="text-[11px] text-gray-500 mt-0.5">Points available</div>
           </div>
           <div className="space-y-2.5 mb-4">
@@ -350,7 +350,7 @@ function EmployeeDashboard({ onNavigate }: { onNavigate: (page: Page) => void })
               </div>
             ))}
           </div>
-          <button onClick={() => onNavigate('gamification')} className="w-full py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded-xl transition-colors">
+          <button onClick={() => onNavigate('gamification')} className="w-full py-2 bg-orange-600 hover:bg-orange-500 text-white text-xs font-semibold rounded-xl transition-colors">
             Browse Rewards
           </button>
         </div>
@@ -404,7 +404,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
               {/* Top accent border */}
               {kpi.topBorder === 'gradient' ? (
                 <div className="absolute top-0 left-0 right-0 h-[2px] rounded-t-2xl"
-                  style={{ background: 'linear-gradient(to right, #10b981, #3b82f6, #8b5cf6)' }} />
+                  style={{ background: 'linear-gradient(to right, #10b981, #3b82f6, #0e7490)' }} />
               ) : (
                 <div className="absolute top-0 left-0 right-0 h-[2px] rounded-t-2xl"
                   style={{ background: kpi.topBorder }} />
@@ -514,10 +514,10 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
                 onClick={() => onNavigate(d.page)}
                 className="w-full flex items-start gap-3 py-2 border-b border-[#1a2035] last:border-0 text-left hover:opacity-80 transition-opacity"
               >
-                <Clock className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${d.urgency === 'urgent' ? 'text-red-400' : d.urgency === 'low' ? 'text-blue-400' : 'text-yellow-400'}`} />
+                <Clock className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${d.urgency === 'urgent' ? 'text-red-400' : d.urgency === 'low' ? 'text-blue-400' : 'text-rose-400'}`} />
                 <div>
                   <p className="text-[11px] text-gray-300 font-medium">{d.label}</p>
-                  <p className={`text-[10px] mt-0.5 ${d.urgency === 'urgent' ? 'text-red-400' : d.urgency === 'low' ? 'text-blue-400' : 'text-yellow-500'}`}>{d.date}</p>
+                  <p className={`text-[10px] mt-0.5 ${d.urgency === 'urgent' ? 'text-red-400' : d.urgency === 'low' ? 'text-blue-400' : 'text-rose-500'}`}>{d.date}</p>
                 </div>
               </button>
             ))}
@@ -555,16 +555,16 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
                 onClick={() => onNavigate('environmental')}
               >
                 <td className="px-5 py-3.5">
-                  <span className={`text-sm font-bold ${row.rank === 1 ? 'text-yellow-400' : row.rank === 2 ? 'text-gray-300' : row.rank === 3 ? 'text-orange-400' : 'text-gray-600'}`}>
+                  <span className={`text-sm font-bold ${row.rank === 1 ? 'text-orange-400' : row.rank === 2 ? 'text-gray-300' : row.rank === 3 ? 'text-orange-400' : 'text-gray-600'}`}>
                     {row.rank === 1 ? '🥇' : row.rank === 2 ? '🥈' : row.rank === 3 ? '🥉' : `#${row.rank}`}
                   </span>
                 </td>
                 <td className="px-5 py-3.5 text-xs font-medium text-gray-200">{row.dept}</td>
                 <td className="px-5 py-3.5"><MiniBar value={row.env} color="bg-emerald-500" /></td>
                 <td className="px-5 py-3.5"><MiniBar value={row.social} color="bg-blue-500" /></td>
-                <td className="px-5 py-3.5"><MiniBar value={row.gov} color="bg-violet-500" /></td>
+                <td className="px-5 py-3.5"><MiniBar value={row.gov} color="bg-cyan-500" /></td>
                 <td className="px-5 py-3.5">
-                  <span className={`text-sm font-bold ${row.overall >= 85 ? 'text-emerald-400' : row.overall >= 75 ? 'text-yellow-400' : row.overall >= 65 ? 'text-orange-400' : 'text-red-400'}`}>
+                  <span className={`text-sm font-bold ${row.overall >= 85 ? 'text-emerald-400' : row.overall >= 75 ? 'text-rose-400' : row.overall >= 65 ? 'text-orange-400' : 'text-red-400'}`}>
                     {row.overall}
                   </span>
                 </td>

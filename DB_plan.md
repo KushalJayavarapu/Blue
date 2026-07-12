@@ -1,0 +1,406 @@
+# EcoSphere — Backend Setup Plan
+
+## Prerequisites (do this BEFORE the hackathon starts)
+
+- [ ] Python 3.11+ installed on every laptop
+- [ ] PostgreSQL installed locally on every laptop (not cloud)
+- [ ] Confirm `psql` command works from terminal
+- [ ] Git repo access confirmed for all 4 members
+
+---
+
+## Step 1: PostgreSQL Local Setup
+
+**Install (if not already):**
+```bash
+# macOS
+brew install postgresql@16
+brew services start postgresql@16
+
+# Windows: download installer from postgresql.org, run it, remember the password you set
+
+# Linux (Ubuntu/Debian)
+sudo apt install postgresql postgresql-contrib
+sudo service postgresql start
+```
+
+**Create the database and user:**
+```bash
+psql postgres
+```
+Inside the `psql` shell:
+```sql
+CREATE DATABASE ecosphere_dev;
+CREATE USER ecosphere_user WITH PASSWORD 'devpassword';
+GRANT ALL PRIVILEGES ON DATABASE ecosphere_dev TO ecosphere_user;
+\q
+```
+
+**Verify connection:**
+```bash
+psql -U ecosphere_user -d ecosphere_dev -h localhost
+```
+If this connects without error, Postgres is ready. Every teammate repeats this step locally — each person needs their own local Postgres instance with matching credentials (or agree on the same username/password/db name across all machines for consistency).
+
+---
+
+## Step 2: Project Skeleton
+
+```bash
+mkdir backend && cd backend
+python -m venv venv
+
+# activate:
+source venv/bin/activate        # macOS/Linux
+venv\Scripts\activate           # Windows
+
+pip install fastapi uvicorn sqlalchemy alembic psycopg2-binary pydantic pydantic-settings python-dotenv passlib[bcrypt] python-jose[cryptography] python-multipart
+pip freeze > requirements.txt
+```
+
+**Folder structure:**
+```bash
+mkdir -p app/models app/schemas app/routers app/crud app/core uploads
+touch app/__init__.py app/main.py
+touch app/models/__init__.py app/schemas/__init__.py app/routers/__init__.py app/crud/__init__.py app/core/__init__.py
+touch app/core/config.py app/core/database.py app/core/security.py app/core/deps.py
+touch .env .gitignore
+```
+
+**`.env`:**
+```
+DATABASE_URL=postgresql://ecosphere_user:devpassword@localhost:5432/ecosphere_dev
+JWT_SECRET=replace-with-a-random-string
+```
+
+**`.gitignore`:**
+```
+venv/
+__pycache__/
+*.pyc
+.env
+uploads/*
+!uploads/.gitkeep
+```
+
+**`app/core/config.py`:**
+```python
+from pydantic_settings import BaseSettings
+
+class Settings(BaseSettings):
+    database_url: str
+    jwt_secret: str
+
+    class Config:
+        env_file = ".env"
+
+settings = Settings()
+```
+
+**`app/core/database.py`:**
+```python
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
+from app.core.config import settings
+
+engine = create_engine(settings.database_url)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+```
+
+**`app/main.py`:**
+```python
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI(title="EcoSphere API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
+@app.get("/api/health")
+def health_check():
+    return {"status": "ok"}
+```
+
+**Run it:**
+```bash
+uvicorn app.main:app --reload --port 4000
+```
+Visit `http://localhost:4000/api/health` → should return `{"status":"ok"}`. Also check `http://localhost:4000/docs` — FastAPI auto-generates interactive API docs here, useful for testing endpoints as you build them.
+
+---
+
+## Step 3: Alembic Setup
+
+```bash
+alembic init alembic
+```
+
+**Edit `alembic.ini`** — find this line and update it:
+```ini
+sqlalchemy.url = postgresql://ecosphere_user:devpassword@localhost:5432/ecosphere_dev
+```
+(Or better — leave it blank and read from `.env` in `env.py`, shown below, so credentials aren't duplicated/hardcoded in two places.)
+
+**Edit `alembic/env.py`** — add near the top, after existing imports:
+```python
+import sys
+import os
+sys.path.append(os.getcwd())
+
+from app.core.config import settings
+from app.core.database import Base
+from app.models import *  # noqa — ensures all models are registered before autogenerate
+
+config.set_main_option("sqlalchemy.url", settings.database_url)
+target_metadata = Base.metadata
+```
+
+---
+
+## Step 4: Define Models (SQLAlchemy)
+
+Create model files under `app/models/`. Example — `app/models/department.py`:
+
+```python
+from sqlalchemy import Column, String, Integer, ForeignKey, Enum
+from sqlalchemy.orm import relationship
+from app.core.database import Base
+import enum
+import uuid
+
+class ActiveStatus(str, enum.Enum):
+    ACTIVE = "ACTIVE"
+    INACTIVE = "INACTIVE"
+
+class Department(Base):
+    __tablename__ = "departments"
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    name = Column(String, nullable=False)
+    code = Column(String, unique=True, nullable=False)
+    head_employee_id = Column(String, ForeignKey("employees.id"), nullable=True)
+    parent_dept_id = Column(String, ForeignKey("departments.id"), nullable=True)
+    employee_count = Column(Integer, default=0)
+    status = Column(Enum(ActiveStatus), default=ActiveStatus.ACTIVE)
+```
+
+Repeat this pattern for every model from your validated schema (Employee, Category, EmissionFactor, CarbonTransaction, EnvironmentalGoal, CSRActivity, EmployeeParticipation, Challenge, ChallengeParticipation, Badge, EmployeeBadge, Reward, RewardRedemption, DepartmentScore — cut ESGPolicy/PolicyAcknowledgement/Audit/ComplianceIssue/ProductESGProfile if Governance is being dropped, per earlier scope decision).
+
+In `app/models/__init__.py`, import every model so Alembic's autogenerate can see them:
+```python
+from app.models.department import Department
+from app.models.employee import Employee
+# ... import every model file here
+```
+
+---
+
+## Step 5: First Migration
+
+```bash
+alembic revision --autogenerate -m "initial schema"
+```
+
+**Open the generated file in `alembic/versions/` and review it manually** — confirm every table, column, and foreign key looks correct before applying. This is not optional per your stated workflow.
+
+```bash
+alembic upgrade head
+```
+
+**Verify tables exist:**
+```bash
+psql -U ecosphere_user -d ecosphere_dev -h localhost -c "\dt"
+```
+Should list every table from your schema.
+
+---
+
+## Step 6: Pydantic Schemas
+
+For every model, create a matching schema file under `app/schemas/`. Example — `app/schemas/department.py`:
+
+```python
+from pydantic import BaseModel
+from typing import Optional
+from enum import Enum
+
+class ActiveStatus(str, Enum):
+    ACTIVE = "ACTIVE"
+    INACTIVE = "INACTIVE"
+
+class DepartmentCreate(BaseModel):
+    name: str
+    code: str
+    head_employee_id: Optional[str] = None
+    parent_dept_id: Optional[str] = None
+
+class DepartmentRead(BaseModel):
+    id: str
+    name: str
+    code: str
+    head_employee_id: Optional[str]
+    parent_dept_id: Optional[str]
+    employee_count: int
+    status: ActiveStatus
+
+    class Config:
+        from_attributes = True  # allows reading directly from SQLAlchemy objects
+```
+
+Repeat this `Create`/`Read` pattern (add `Update` where partial edits are needed) for every model — this is your "mirrored 1:1" validation layer.
+
+---
+
+## Step 7: Auth (bcrypt + JWT)
+
+**`app/core/security.py`:**
+```python
+from passlib.context import CryptContext
+from jose import jwt
+from datetime import datetime, timedelta
+from app.core.config import settings
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def hash_password(password: str) -> str:
+    return pwd_context.hash(password)
+
+def verify_password(plain: str, hashed: str) -> bool:
+    return pwd_context.verify(plain, hashed)
+
+def create_access_token(data: dict) -> str:
+    to_encode = data.copy()
+    to_encode["exp"] = datetime.utcnow() + timedelta(hours=8)
+    return jwt.encode(to_encode, settings.jwt_secret, algorithm="HS256")
+
+def decode_token(token: str) -> dict:
+    return jwt.decode(token, settings.jwt_secret, algorithms=["HS256"])
+```
+
+**`app/core/deps.py`** (the auth dependency, equivalent to Express middleware):
+```python
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from sqlalchemy.orm import Session
+from app.core.database import get_db
+from app.core.security import decode_token
+from app.models.employee import Employee
+
+security = HTTPBearer()
+
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db),
+):
+    try:
+        payload = decode_token(credentials.credentials)
+        user = db.query(Employee).filter(Employee.id == payload["id"]).first()
+        if not user:
+            raise HTTPException(status_code=401, detail="User not found")
+        return user
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+def require_role(*allowed_roles):
+    def role_checker(current_user: Employee = Depends(get_current_user)):
+        if current_user.role.value not in allowed_roles:
+            raise HTTPException(status_code=403, detail="Insufficient permissions")
+        return current_user
+    return role_checker
+```
+
+**`app/routers/auth.py`:**
+```python
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from app.core.database import get_db
+from app.core.security import hash_password, verify_password, create_access_token
+from app.core.deps import get_current_user
+from app.models.employee import Employee
+from app.schemas.employee import EmployeeSignup, EmployeeLogin
+
+router = APIRouter(prefix="/api/auth", tags=["auth"])
+
+@router.post("/signup")
+def signup(data: EmployeeSignup, db: Session = Depends(get_db)):
+    existing = db.query(Employee).filter(Employee.email == data.email).first()
+    if existing:
+        raise HTTPException(status_code=409, detail="Email already registered")
+
+    employee = Employee(
+        name=data.name,
+        email=data.email,
+        password_hash=hash_password(data.password),
+        department_id=data.department_id,
+        role="EMPLOYEE",
+    )
+    db.add(employee)
+    db.commit()
+    db.refresh(employee)
+
+    token = create_access_token({"id": employee.id, "role": employee.role.value})
+    return {"token": token, "user": {"id": employee.id, "name": employee.name, "role": employee.role}}
+
+@router.post("/login")
+def login(data: EmployeeLogin, db: Session = Depends(get_db)):
+    employee = db.query(Employee).filter(Employee.email == data.email).first()
+    if not employee or not verify_password(data.password, employee.password_hash):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    token = create_access_token({"id": employee.id, "role": employee.role.value})
+    return {"token": token, "user": {"id": employee.id, "name": employee.name, "role": employee.role}}
+
+@router.get("/me")
+def me(current_user: Employee = Depends(get_current_user)):
+    return {"id": current_user.id, "name": current_user.name, "role": current_user.role}
+```
+
+**Wire into `app/main.py`:**
+```python
+from app.routers import auth
+
+app.include_router(auth.router)
+```
+
+---
+
+## Step 8: Test Auth End-to-End
+
+```bash
+uvicorn app.main:app --reload --port 4000
+```
+
+Use `http://localhost:4000/docs` (FastAPI's interactive Swagger UI) to test `/api/auth/signup`, `/api/auth/login`, `/api/auth/me` directly in the browser — no curl needed, though curl works too if preferred.
+
+---
+
+## Checklist before moving to feature modules
+
+- [ ] `alembic upgrade head` runs clean on a fresh Postgres instance
+- [ ] `/api/health` returns 200
+- [ ] Signup creates an Employee row with a bcrypt-hashed password (verify via `psql`)
+- [ ] Login returns a valid JWT
+- [ ] `/api/auth/me` works with token, returns 401 without
+- [ ] `.env` and `venv/` are confirmed git-ignored
+- [ ] Every teammate has run this setup locally and confirmed `/docs` loads
+
+---
+
+## Next after this plan
+Once this passes, build routers/crud/schemas per module in this priority order: **Environmental → Gamification → Social → Dashboard → Reports/Settings → Governance (if time allows)** — same priority stack as previously agreed, now just implemented in FastAPI instead of Express.

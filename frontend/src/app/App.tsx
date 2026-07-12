@@ -22,11 +22,10 @@ export default function App() {
   const [authed, setAuthed] = useState(false);
   const [role, setRole] = useState<UserRole>('manager');
   const [page, setPage] = useState<Page>('dashboard');
-  const [isDark, setIsDark] = useState(true);
   const [employeeProfile, setEmployeeProfile] = useState<UserProfile>(EMPLOYEE_PROFILE);
   const [managerProfile, setManagerProfile] = useState<UserProfile>(MANAGER_PROFILE);
 
-  const theme = isDark ? 'dark' : 'light';
+  const theme = 'light';
   const user = role === 'employee' ? employeeProfile : managerProfile;
 
   const handleLogin = (loginRole: UserRole) => {
@@ -83,21 +82,15 @@ export default function App() {
         data-theme={theme}
         className="flex min-h-screen"
         style={{
-          background: isDark
-            ? 'radial-gradient(ellipse at 18% 55%, rgba(113,75,103,0.24) 0%, transparent 52%), radial-gradient(ellipse at 82% 12%, rgba(113,75,103,0.13) 0%, transparent 42%), #1C1016'
-            : 'radial-gradient(ellipse at 18% 55%, rgba(113,75,103,0.11) 0%, transparent 52%), radial-gradient(ellipse at 82% 12%, rgba(240,220,200,0.7) 0%, transparent 42%), #F4EBE2',
-          color: isDark ? '#F0E5EB' : '#2D1B29',
+          background: 'radial-gradient(ellipse at 15% 20%, rgba(112,75,106,0.16) 0%, transparent 45%), radial-gradient(ellipse at 85% 15%, rgba(112,75,106,0.10) 0%, transparent 40%), radial-gradient(ellipse at 50% 100%, rgba(255,255,255,0.9) 0%, transparent 55%), linear-gradient(160deg, #FDF8F2 0%, #F6EAE0 50%, #F1E1D6 100%)',
+          color: '#2D1B29',
           fontFamily: "'Geist', -apple-system, BlinkMacSystemFont, sans-serif",
         }}
       >
-        <Sidebar currentPage={page} onNavigate={setPage} isDark={isDark} />
+        <Sidebar currentPage={page} onNavigate={setPage} />
 
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-          <TopNav
-            onLogout={handleLogout}
-            isDark={isDark}
-            onToggleTheme={() => setIsDark(d => !d)}
-          />
+          <TopNav onLogout={handleLogout} />
           <main className="flex-1 overflow-auto p-6" style={{ background: 'transparent' }}>
             <div className="max-w-[1200px] mx-auto">
               {pageMap[page]}

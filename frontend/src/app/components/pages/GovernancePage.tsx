@@ -52,7 +52,7 @@ const initialIssues: ComplianceIssue[] = [
 function SeverityBadge({ s }: { s: string }) {
   const map: Record<string, string> = {
     high: 'text-red-400 bg-red-500/10 border-red-500/20',
-    medium: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20',
+    medium: 'text-rose-400 bg-rose-500/10 border-rose-500/20',
     low: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
   };
   return <span className={`inline-flex px-2 py-0.5 rounded-full text-[11px] border capitalize ${map[s]}`}>{s}</span>;
@@ -61,7 +61,7 @@ function SeverityBadge({ s }: { s: string }) {
 function StatusBadge({ s }: { s: string }) {
   const map: Record<string, string> = {
     open: 'text-red-400 bg-red-500/10 border-red-500/20',
-    'in-progress': 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20',
+    'in-progress': 'text-rose-400 bg-rose-500/10 border-rose-500/20',
     resolved: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
     completed: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
     scheduled: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
@@ -335,7 +335,7 @@ export function GovernancePage() {
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-2">
                         <div className="w-28 h-1.5 bg-[#1a2035] rounded-full overflow-hidden">
-                          <div className={`h-full rounded-full ${p.ackRate >= 90 ? 'bg-emerald-500' : p.ackRate >= 75 ? 'bg-yellow-500' : 'bg-red-500'}`} style={{ width: `${p.ackRate}%` }} />
+                          <div className={`h-full rounded-full ${p.ackRate >= 90 ? 'bg-emerald-500' : p.ackRate >= 75 ? 'bg-rose-500' : 'bg-red-500'}`} style={{ width: `${p.ackRate}%` }} />
                         </div>
                         <span className="text-xs text-gray-400 w-8">{p.ackRate}%</span>
                         <span className="text-[11px] text-gray-600">{Math.round(p.total * p.ackRate / 100)}/{p.total}</span>
@@ -383,7 +383,7 @@ export function GovernancePage() {
               </div>
               <div className="flex items-center gap-2 mb-1.5">
                 <div className="flex-1 h-2 bg-[#1a2035] rounded-full overflow-hidden">
-                  <div className={`h-full rounded-full ${p.ackRate >= 90 ? 'bg-emerald-500' : p.ackRate >= 75 ? 'bg-yellow-500' : 'bg-red-500'}`} style={{ width: `${p.ackRate}%` }} />
+                  <div className={`h-full rounded-full ${p.ackRate >= 90 ? 'bg-emerald-500' : p.ackRate >= 75 ? 'bg-rose-500' : 'bg-red-500'}`} style={{ width: `${p.ackRate}%` }} />
                 </div>
                 <span className="text-xs font-semibold text-gray-200 shrink-0">{p.ackRate}%</span>
               </div>
@@ -425,7 +425,7 @@ export function GovernancePage() {
                   <td className="px-5 py-3.5 text-xs text-gray-300">{a.auditor}</td>
                   <td className="px-5 py-3.5 text-xs text-gray-500">{a.date}</td>
                   <td className="px-5 py-3.5">
-                    <span className={`text-xs font-semibold ${a.findings === 0 ? 'text-emerald-400' : a.findings <= 2 ? 'text-yellow-400' : 'text-red-400'}`}>
+                    <span className={`text-xs font-semibold ${a.findings === 0 ? 'text-emerald-400' : a.findings <= 2 ? 'text-rose-400' : 'text-red-400'}`}>
                       {a.findings} {a.findings === 1 ? 'finding' : 'findings'}
                     </span>
                   </td>

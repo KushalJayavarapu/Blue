@@ -12,19 +12,13 @@ Full spec reference: wireframe screens (7 modules) + data model + business rules
 
 | Layer | Choice | Why |
 |---|---|---|
-| Frontend framework | React (Vite) + TypeScript | Fast parallel dev across screens, type safety against the API |
-| Styling | Tailwind CSS v4 | Consistent color scheme/layout must-have, CSS-first config, faster builds than v3 |
-| Component library | shadcn/ui (Radix UI primitives) | Accessible, pre-built tables/modals/dropdowns/forms — the fastest way to cover 7 modules' worth of UI without hand-building every table and dialog |
-| Routing | React Router v7 | Turns the wireframe's sidebar + tabs into real routes/pages instead of one monolithic view |
-| Forms | React Hook Form | Client-side validation feedback before submit — a second layer on top of Pydantic's server-side validation |
-| Icons | Lucide React | Sidebar/nav/action icons |
-| Notifications (UI) | Sonner | Toasts for the required Notification System: badge unlocks, approval decisions, compliance alerts, policy reminders |
-| Charts | Recharts | Dashboard trend line + department ranking |
-| Data fetching | TanStack Query | Real API calls with loading/error states — satisfies "no static JSON" |
+| Frontend | React (Vite) + TypeScript + Tailwind CSS | Fast parallel dev across screens, type safety against the API, consistent UI with no hand-rolled CSS |
 | Backend | Python + FastAPI | Async-native, auto-generates OpenAPI docs at `/docs`, structural validation |
-| Validation (server) | Pydantic (built into FastAPI) | Request/response shape enforced automatically — no separate validation layer needed |
+| Validation | Pydantic (built into FastAPI) | Request/response shape enforced automatically — no separate validation layer needed |
 | ORM + migrations | SQLAlchemy + Alembic | Real schema migrations, safe for a team editing the schema together |
 | Database | PostgreSQL (local) | Relational constraints, concurrent writes, no cloud dependency — runs fully offline for a laptop demo |
+| Data fetching (frontend) | TanStack Query | Real API calls with loading/error states — satisfies "no static JSON" |
+| Charts | Recharts | Dashboard trend line + department ranking |
 | Auth | None | Not in scope — use a simple employee/department picker in the header instead |
 | Version control | Git + GitHub, branch per module | One person merges into `main`, keeps it always demoable |
 | Tests (if time allows) | pytest on business-logic functions only | Cheapest to test, most likely place for a silent bug |
@@ -226,116 +220,40 @@ the app.
 ### `frontend/package.json` — key dependencies to install
 
 ```
-npm create vite@latest frontend -- --template react-ts
-cd frontend
-npm install react-router-dom
-npm install tailwindcss @tailwindcss/vite
+npm install react react-dom
+npm install -D typescript vite @vitejs/plugin-react
+npm install -D tailwindcss postcss autoprefixer
 npm install @tanstack/react-query recharts axios
-npm install react-hook-form lucide-react sonner
-npx shadcn@latest init
+npx tailwindcss init -p
 ```
-
-`shadcn@latest init` will ask a few prompts (base color, CSS variables) and sets up
-`components.json`, the `@/` path alias, and the Tailwind theme tokens automatically — accept the
-defaults unless someone wants to bikeshed the color palette.
 
 ### `frontend/vite.config.ts`
 
 ```ts
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
-import path from "path";
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
-  resolve: {
-    alias: { "@": path.resolve(__dirname, "./src") },
-  },
+  plugins: [react()],
   server: {
     proxy: { "/api": "http://localhost:8000" },
   },
 });
 ```
 
-The proxy means frontend code just calls `/api/...` — no CORS juggling, no hardcoded
-`localhost:8000` scattered through components. The `@` alias is what makes shadcn's
-`@/components/ui/...` imports work.
+This proxy means frontend code just calls `/api/...` — no CORS juggling, no hardcoded
+`localhost:8000` scattered through components.
 
-### `frontend/tsconfig.json` — path alias (needed for shadcn imports)
+### `frontend/tailwind.config.js`
 
-```json
-{
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": { "@/*": ["./src/*"] }
-  }
-}
+```js
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ["./index.html", "./src/**/*.{ts,tsx}"],
+  theme: { extend: {} },
+  plugins: [],
+};
 ```
-
-### `frontend/src/index.css` — Tailwind v4 is CSS-first, no `tailwind.config.js` needed
-
-```css
-@import "tailwindcss";
-```
-
-`shadcn init` appends the theme tokens (colors, radius, etc.) below this line automatically —
-don't hand-edit that block.
-
-### `frontend/src/router.tsx` — one route per module, matches the wireframe's sidebar
-
-```tsx
-import { createBrowserRouter } from "react-router-dom";
-import DashboardPage from "@/pages/dashboard/DashboardPage";
-import EnvironmentalPage from "@/pages/environmental/EnvironmentalPage";
-import SocialPage from "@/pages/social/SocialPage";
-import GovernancePage from "@/pages/governance/GovernancePage";
-import GamificationPage from "@/pages/gamification/GamificationPage";
-import ReportsPage from "@/pages/reports/ReportsPage";
-import SettingsPage from "@/pages/settings/SettingsPage";
-import AppShell from "@/components/AppShell";
-
-export const router = createBrowserRouter([
-  {
-    element: <AppShell />, // sidebar + tab bar wrapper, shared across all routes
-    children: [
-      { path: "/", element: <DashboardPage /> },
-      { path: "/environmental", element: <EnvironmentalPage /> },
-      { path: "/social", element: <SocialPage /> },
-      { path: "/governance", element: <GovernancePage /> },
-      { path: "/gamification", element: <GamificationPage /> },
-      { path: "/reports", element: <ReportsPage /> },
-      { path: "/settings", element: <SettingsPage /> },
-    ],
-  },
-]);
-```
-
-### `frontend/src/main.tsx` — wire up router, query client, and the toaster
-
-```tsx
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { RouterProvider } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "sonner";
-import { router } from "@/router";
-import "./index.css";
-
-const queryClient = new QueryClient();
-
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-      <Toaster richColors position="top-right" />
-    </QueryClientProvider>
-  </StrictMode>,
-);
-```
-
-Call `toast.success("Badge unlocked!")` (import `{ toast }` from `"sonner"`) anywhere a
-notification event fires — badge unlocks, approval decisions, new compliance issues.
 
 ### `frontend/.env.example`
 

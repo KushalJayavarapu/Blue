@@ -302,7 +302,7 @@ export function SettingsPage() {
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-all ${
-              activeTab === tab.id ? 'bg-slate-600 text-white shadow-sm' : 'text-gray-500 hover:text-gray-300 hover:bg-[#111827]'
+              activeTab === tab.id ? 'bg-violet-600/90 text-white shadow-sm' : 'text-gray-500 hover:text-gray-300 hover:bg-[#111827]'
             }`}
           >
             {tab.label}

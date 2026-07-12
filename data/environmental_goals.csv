@@ -1,0 +1,16 @@
+goal_id,goal_name,department,target_reduction_percent,progress_percent,deadline
+1,Goal 1,Operations,30,3,2026-12-31
+2,Goal 2,Engineering,25,51,2026-12-31
+3,Goal 3,Finance,13,62,2026-12-31
+4,Goal 4,Operations,12,10,2026-12-31
+5,Goal 5,Sales,29,18,2026-12-31
+6,Goal 6,Manufacturing,14,35,2026-12-31
+7,Goal 7,Sales,22,76,2026-12-31
+8,Goal 8,Procurement,24,64,2026-12-31
+9,Goal 9,Finance,13,89,2026-12-31
+10,Goal 10,Manufacturing,30,83,2026-12-31
+11,Goal 11,HR,23,57,2026-12-31
+12,Goal 12,HR,23,43,2026-12-31
+13,Goal 13,Operations,22,53,2026-12-31
+14,Goal 14,Manufacturing,20,54,2026-12-31
+15,Goal 15,Sales,18,47,2026-12-31

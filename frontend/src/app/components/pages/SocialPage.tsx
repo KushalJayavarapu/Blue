@@ -110,7 +110,7 @@ function AnalyzeModal({ data, onClose }: { data: Participant[]; onClose: () => v
             {[
               { label: 'Total Records', value: total, color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/20' },
               { label: 'Approval Rate', value: `${approvalRate}%`, color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
-              { label: 'Pending Review', value: pending, color: 'text-yellow-400', bg: 'bg-yellow-500/10 border-yellow-500/20' },
+              { label: 'Pending Review', value: pending, color: 'text-rose-400', bg: 'bg-rose-500/10 border-rose-500/20' },
               { label: 'Rejected', value: rejected, color: 'text-red-400', bg: 'bg-red-500/10 border-red-500/20' },
             ].map(k => (
               <div key={k.label} className={`border rounded-xl p-3 text-center ${k.bg}`}>
@@ -125,13 +125,13 @@ function AnalyzeModal({ data, onClose }: { data: Participant[]; onClose: () => v
             <h4 className="text-xs font-semibold text-gray-400 mb-3">Status Breakdown</h4>
             <div className="flex h-3 rounded-full overflow-hidden gap-0.5">
               {approved > 0 && <div className="bg-emerald-500 transition-all" style={{ width: `${(approved / total) * 100}%` }} title={`Approved: ${approved}`} />}
-              {pending > 0 && <div className="bg-yellow-500 transition-all" style={{ width: `${(pending / total) * 100}%` }} title={`Pending: ${pending}`} />}
+              {pending > 0 && <div className="bg-rose-500 transition-all" style={{ width: `${(pending / total) * 100}%` }} title={`Pending: ${pending}`} />}
               {rejected > 0 && <div className="bg-red-500 transition-all" style={{ width: `${(rejected / total) * 100}%` }} title={`Rejected: ${rejected}`} />}
             </div>
             <div className="flex items-center gap-4 mt-2">
               {[
                 { label: 'Approved', count: approved, color: 'bg-emerald-500' },
-                { label: 'Pending', count: pending, color: 'bg-yellow-500' },
+                { label: 'Pending', count: pending, color: 'bg-rose-500' },
                 { label: 'Rejected', count: rejected, color: 'bg-red-500' },
               ].map(s => (
                 <div key={s.label} className="flex items-center gap-1.5 text-[11px] text-gray-500">
@@ -501,7 +501,7 @@ export function SocialPage() {
               <div className="flex items-center gap-3 text-[11px]">
                 {[
                   { label: 'Approved', count: participation.filter(p => p.status === 'approved').length, color: 'text-emerald-400' },
-                  { label: 'Pending', count: participation.filter(p => p.status === 'pending').length, color: 'text-yellow-400' },
+                  { label: 'Pending', count: participation.filter(p => p.status === 'pending').length, color: 'text-rose-400' },
                   { label: 'Rejected', count: participation.filter(p => p.status === 'rejected').length, color: 'text-red-400' },
                 ].map(s => (
                   <span key={s.label} className={`${s.color}`}>{s.label}: {s.count}</span>
@@ -543,7 +543,7 @@ export function SocialPage() {
                       <span className={`text-[11px] px-2.5 py-0.5 rounded-full border capitalize ${
                         row.status === 'approved' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' :
                         row.status === 'rejected' ? 'text-red-400 bg-red-500/10 border-red-500/20' :
-                        'text-yellow-400 bg-yellow-500/10 border-yellow-500/20'
+                        'text-rose-400 bg-rose-500/10 border-rose-500/20'
                       }`}>{row.status}</span>
                     </td>
                     <td className="px-5 py-3.5">
