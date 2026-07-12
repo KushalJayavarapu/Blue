@@ -1,8 +1,0 @@
-export default function SocialPage() {
-  return (
-    <div>
-      <h1>Social</h1>
-      <p>CSR Activities & Participation - Coming Soon</p>
-    </div>
-  );
-}
