@@ -10,6 +10,7 @@ import { GovernancePage } from './components/pages/GovernancePage';
 import { GamificationPage } from './components/pages/GamificationPage';
 import { ReportsPage } from './components/pages/ReportsPage';
 import { SettingsPage } from './components/pages/SettingsPage';
+import { SimulatorPage } from './components/pages/SimulatorPage';
 
 export default function App() {
   const [authed, setAuthed] = useState(false);
@@ -35,6 +36,7 @@ export default function App() {
     gamification: <GamificationPage />,
     reports: <ReportsPage />,
     settings: <SettingsPage />,
+    simulator: <SimulatorPage />,
   };
 
   return (

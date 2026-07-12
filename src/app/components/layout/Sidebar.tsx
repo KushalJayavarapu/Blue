@@ -1,6 +1,6 @@
-import { LayoutDashboard, Leaf, Users, Shield, Trophy, FileText, Settings, ChevronDown, Building2 } from 'lucide-react';
+import { LayoutDashboard, Leaf, Users, Shield, Trophy, FileText, Settings, ChevronDown, Building2, FlaskConical } from 'lucide-react';
 
-export type Page = 'dashboard' | 'environmental' | 'social' | 'governance' | 'gamification' | 'reports' | 'settings';
+export type Page = 'dashboard' | 'environmental' | 'social' | 'governance' | 'gamification' | 'reports' | 'settings' | 'simulator';
 
 interface NavItem {
   id: Page;
@@ -19,6 +19,7 @@ const navItems: NavItem[] = [
   { id: 'governance', label: 'Governance', icon: Shield, iconColor: 'text-violet-600', activeColor: 'text-violet-400', activeBg: 'bg-violet-500/10', activeDot: 'bg-violet-400' },
   { id: 'gamification', label: 'Gamification', icon: Trophy, iconColor: 'text-orange-600', activeColor: 'text-orange-400', activeBg: 'bg-orange-500/10', activeDot: 'bg-orange-400' },
   { id: 'reports', label: 'Reports', icon: FileText, iconColor: 'text-gray-600', activeColor: 'text-gray-300', activeBg: 'bg-gray-700/40', activeDot: 'bg-gray-400' },
+  { id: 'simulator', label: 'Simulator', icon: FlaskConical, iconColor: 'text-violet-600', activeColor: 'text-violet-400', activeBg: 'bg-violet-500/10', activeDot: 'bg-violet-400' },
   { id: 'settings', label: 'Settings', icon: Settings, iconColor: 'text-slate-600', activeColor: 'text-slate-300', activeBg: 'bg-slate-700/40', activeDot: 'bg-slate-400' },
 ];
 
