@@ -15,11 +15,11 @@ type Challenge = {
 };
 
 const kanbanCols = [
-  { id: 'draft', label: 'Draft', color: 'text-gray-400', border: 'border-gray-500/15', bg: 'bg-gray-500/3' },
-  { id: 'active', label: 'Active', color: 'text-emerald-400', border: 'border-emerald-500/20', bg: 'bg-emerald-500/5' },
-  { id: 'review', label: 'Under Review', color: 'text-yellow-400', border: 'border-yellow-500/20', bg: 'bg-yellow-500/5' },
-  { id: 'completed', label: 'Completed', color: 'text-blue-400', border: 'border-blue-500/20', bg: 'bg-blue-500/5' },
-  { id: 'archived', label: 'Archived', color: 'text-gray-600', border: 'border-gray-500/10', bg: 'bg-gray-500/3' },
+  { id: 'draft',     label: 'Draft',        color: 'text-slate-400',  border: 'border-slate-500/20',  bg: 'bg-slate-500/5'  },
+  { id: 'active',    label: 'Active',       color: 'text-emerald-400', border: 'border-emerald-500/20', bg: 'bg-emerald-500/5' },
+  { id: 'review',    label: 'Under Review', color: 'text-amber-400',  border: 'border-amber-500/20',  bg: 'bg-amber-500/5'  },
+  { id: 'completed', label: 'Completed',    color: 'text-blue-400',   border: 'border-blue-500/20',   bg: 'bg-blue-500/5'   },
+  { id: 'archived',  label: 'Archived',     color: 'text-gray-500',   border: 'border-gray-500/15',   bg: 'bg-gray-500/3'   },
 ];
 
 const initialChallenges: Challenge[] = [
@@ -81,16 +81,23 @@ function RarityBadge({ r }: { r: string }) {
     Common: 'text-gray-400 bg-gray-500/10 border-gray-500/20',
     Rare: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
     Epic: 'text-violet-400 bg-violet-500/10 border-violet-500/20',
-    Legendary: 'text-orange-400 bg-orange-500/10 border-orange-500/20',
+    Legendary: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
   };
   return <span className={`text-[10px] px-1.5 py-0.5 rounded border ${map[r]}`}>{r}</span>;
 }
 
 function RankMedal({ rank }: { rank: number }) {
-  if (rank === 1) return <span className="text-base">🥇</span>;
-  if (rank === 2) return <span className="text-base">🥈</span>;
-  if (rank === 3) return <span className="text-base">🥉</span>;
+  if (rank === 1) return <span className="text-sm font-bold" style={{ color: '#FBBF24' }}>🥇</span>;
+  if (rank === 2) return <span className="text-sm font-bold" style={{ color: '#CBD5E1' }}>🥈</span>;
+  if (rank === 3) return <span className="text-sm font-bold" style={{ color: '#D97706' }}>🥉</span>;
   return <span className="text-xs font-bold text-gray-600">#{rank}</span>;
+}
+
+function rankRowStyle(rank: number): React.CSSProperties {
+  if (rank === 1) return { background: 'rgba(251, 191, 36, 0.06)' };
+  if (rank === 2) return { background: 'rgba(203, 213, 225, 0.05)' };
+  if (rank === 3) return { background: 'rgba(217, 119, 6, 0.06)' };
+  return {};
 }
 
 type NewChallengeForm = { name: string; xp: string; difficulty: 'Easy' | 'Medium' | 'Hard'; deadline: string };
@@ -159,7 +166,7 @@ function NewChallengeModal({ onClose, onSave }: { onClose: () => void; onSave: (
           </div>
           <div className="flex gap-2 pt-1">
             <button type="button" onClick={onClose} className="flex-1 py-2.5 bg-[#111827] border border-[#1a2035] text-gray-400 hover:text-gray-200 text-xs rounded-xl transition-colors">Cancel</button>
-            <button type="submit" className="flex-1 py-2.5 bg-orange-600 hover:bg-orange-500 text-white text-xs font-semibold rounded-xl transition-colors">Create Challenge</button>
+            <button type="submit" className="flex-1 py-2.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded-xl transition-colors">Create Challenge</button>
           </div>
         </form>
       </div>
@@ -213,7 +220,7 @@ export function GamificationPage() {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-xl font-semibold text-white">Gamification</h1>
+        <h1 className="text-xl font-semibold text-white">Challenges</h1>
         <p className="text-xs text-gray-500 mt-0.5">Engage employees with ESG challenges, badges, and rewards</p>
       </div>
 
@@ -223,7 +230,7 @@ export function GamificationPage() {
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-all ${
-              activeTab === tab.id ? 'bg-orange-600/90 text-white shadow-sm' : 'text-gray-500 hover:text-gray-300 hover:bg-[#111827]'
+              activeTab === tab.id ? 'bg-amber-600/90 text-white shadow-sm' : 'text-gray-500 hover:text-gray-300 hover:bg-[#111827]'
             }`}
           >
             {tab.label}
@@ -237,7 +244,7 @@ export function GamificationPage() {
             <p className="text-xs text-gray-500">Click a card to view details or join an active challenge</p>
             <button
               onClick={() => setShowNewChallenge(true)}
-              className="flex items-center gap-2 px-3 py-2 bg-orange-600 hover:bg-orange-500 text-white text-xs font-semibold rounded-xl transition-colors"
+              className="flex items-center gap-2 px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded-xl transition-colors"
             >
               <Plus className="w-3.5 h-3.5" /> New Challenge
             </button>
@@ -261,7 +268,7 @@ export function GamificationPage() {
                             <DiffBadge d={c.difficulty} />
                           </div>
                           <div className="flex items-center justify-between text-[10px]">
-                            <span className="text-orange-400 font-semibold">+{c.xp} XP</span>
+                            <span className="text-amber-400 font-semibold">+{c.xp} XP</span>
                             <span className="text-gray-600">{c.deadline}</span>
                           </div>
                           {col.id === 'active' && (
@@ -271,7 +278,7 @@ export function GamificationPage() {
                               className={`mt-2.5 w-full py-1.5 text-[10px] font-medium rounded-lg transition-colors ${
                                 joined
                                   ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 cursor-default'
-                                  : 'bg-orange-600/20 border border-orange-500/20 text-orange-400 hover:bg-orange-600/30'
+                                  : 'bg-amber-600/20 border border-amber-500/20 text-amber-400 hover:bg-amber-600/30'
                               }`}
                             >
                               {joined ? `✓ Joined · ${c.participants}` : `Join · ${c.participants} joined`}
@@ -321,9 +328,9 @@ export function GamificationPage() {
                       <span className="text-[11px] text-gray-500">{row.progress}%</span>
                     </div>
                   </td>
-                  <td className="px-5 py-3.5 text-xs font-semibold text-orange-400">+{row.xp} XP</td>
+                  <td className="px-5 py-3.5 text-xs font-semibold text-amber-400">+{row.xp} XP</td>
                   <td className="px-5 py-3.5">
-                    <span className={`text-[11px] px-2 py-0.5 rounded-full border ${row.done ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20'}`}>
+                    <span className={`text-[11px] px-2 py-0.5 rounded-full border ${row.done ? 'text-blue-400 bg-blue-500/10 border-blue-500/20' : 'text-amber-400 bg-amber-500/10 border-amber-500/20'}`}>
                       {row.done ? 'Completed' : 'In Progress'}
                     </span>
                   </td>
@@ -356,19 +363,19 @@ export function GamificationPage() {
               <div key={r.id} className={`bg-[#0d1222] border rounded-2xl p-4 transition-all ${redeemed ? 'border-emerald-500/30' : 'border-[#1a2035] hover:border-orange-500/25'}`}>
                 <div className="flex items-start justify-between mb-3">
                   <div className="text-3xl">{r.emoji}</div>
-                  <span className="text-[11px] text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded-full border border-orange-500/20">{r.category}</span>
+                  <span className="text-[11px] text-amber-400 bg-orange-500/10 px-2 py-0.5 rounded-full border border-orange-500/20">{r.category}</span>
                 </div>
                 <h3 className="text-sm font-semibold text-gray-100 mb-1">{r.name}</h3>
                 <p className="text-xs text-gray-500 mb-4">{r.desc}</p>
                 <div className="flex items-center justify-between">
-                  <span className="text-base font-bold text-orange-400">{r.points.toLocaleString()} pts</span>
+                  <span className="text-base font-bold text-amber-400">{r.points.toLocaleString()} pts</span>
                   <button
                     onClick={() => handleRedeem(r.id, r.name, r.points)}
                     disabled={redeemed}
                     className={`px-3 py-1.5 text-xs font-semibold rounded-xl transition-colors ${
                       redeemed
                         ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 cursor-default'
-                        : 'bg-orange-600 hover:bg-orange-500 text-white'
+                        : 'bg-amber-600 hover:bg-amber-500 text-white'
                     }`}
                   >
                     {redeemed ? 'Redeemed ✓' : 'Redeem'}
@@ -389,13 +396,13 @@ export function GamificationPage() {
             </div>
             <div className="p-3 space-y-1">
               {topDepts.map((d) => (
-                <div key={d.rank} className={`flex items-center gap-3 px-3 py-3 rounded-xl ${d.rank <= 3 ? 'bg-orange-500/5' : ''}`}>
+                <div key={d.rank} className="flex items-center gap-3 px-3 py-3 rounded-xl transition-colors" style={rankRowStyle(d.rank)}>
                   <div className="w-8 flex justify-center shrink-0"><RankMedal rank={d.rank} /></div>
                   <div className="flex-1">
                     <span className="text-sm font-medium text-gray-200">{d.name}</span>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm font-bold text-orange-400">{d.score.toLocaleString()}</div>
+                    <div className="text-sm font-bold text-amber-400">{d.score.toLocaleString()}</div>
                     <div className={`text-[10px] ${d.up ? 'text-emerald-400' : 'text-red-400'}`}>{d.change}</div>
                   </div>
                 </div>
@@ -410,16 +417,16 @@ export function GamificationPage() {
             </div>
             <div className="p-3 space-y-1">
               {topEmployees.map((e) => (
-                <div key={e.rank} className={`flex items-center gap-3 px-3 py-3 rounded-xl ${e.rank <= 3 ? 'bg-orange-500/5' : ''}`}>
+                <div key={e.rank} className="flex items-center gap-3 px-3 py-3 rounded-xl transition-colors" style={rankRowStyle(e.rank)}>
                   <div className="w-8 flex justify-center shrink-0"><RankMedal rank={e.rank} /></div>
-                  <div className="w-8 h-8 rounded-full bg-orange-500/15 border border-orange-500/25 flex items-center justify-center text-[11px] font-bold text-orange-400 shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-orange-500/15 border border-orange-500/25 flex items-center justify-center text-[11px] font-bold text-amber-400 shrink-0">
                     {e.initials}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-xs font-medium text-gray-200 truncate">{e.name}</div>
                     <div className="text-[10px] text-gray-600">{e.dept}</div>
                   </div>
-                  <span className="text-sm font-bold text-orange-400 shrink-0">{e.points.toLocaleString()}</span>
+                  <span className="text-sm font-bold text-amber-400 shrink-0">{e.points.toLocaleString()}</span>
                 </div>
               ))}
             </div>

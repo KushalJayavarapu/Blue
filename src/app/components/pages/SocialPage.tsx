@@ -377,7 +377,7 @@ export function SocialPage() {
     <div className="space-y-5">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-white">Social</h1>
+          <h1 className="text-xl font-semibold text-white">Explore Activities</h1>
           <p className="text-xs text-gray-500 mt-0.5">Manage CSR activities, track employee participation, and monitor diversity metrics</p>
         </div>
 

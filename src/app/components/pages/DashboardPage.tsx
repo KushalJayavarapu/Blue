@@ -1,5 +1,6 @@
-import { TrendingUp, TrendingDown, Leaf, Users, Shield, BarChart3, Target, Trophy, FileText, ArrowUpRight, Clock } from 'lucide-react';
-import { toast } from 'sonner';
+import { useState } from 'react';
+import { TrendingUp, TrendingDown, Leaf, Users, Shield, BarChart3, Target, Trophy, FileText, ArrowUpRight, Clock, Star, Zap, Award } from 'lucide-react';
+import { useRole } from '../../context/RoleContext';
 import type { Page } from '../layout/Sidebar';
 
 const carbonData = [
@@ -15,10 +16,10 @@ const deptData = [
 ];
 
 const kpis = [
-  { label: 'Environmental Score', value: 78, prev: 75.5, icon: Leaf, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', bar: 'bg-emerald-500' },
-  { label: 'Social Score', value: 82, prev: 80.5, icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20', bar: 'bg-blue-500' },
-  { label: 'Governance Score', value: 71, prev: 71.4, icon: Shield, color: 'text-violet-400', bg: 'bg-violet-500/10', border: 'border-violet-500/20', bar: 'bg-violet-500' },
-  { label: 'Overall ESG Score', value: 77, prev: 75.5, icon: BarChart3, color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20', bar: 'bg-orange-500' },
+  { label: 'Environmental Score', value: 78, prev: 75.5, icon: Leaf,     color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', bar: 'bg-emerald-500', topBorder: '#10B981' },
+  { label: 'Social Score',        value: 82, prev: 80.5, icon: Users,    color: 'text-blue-400',    bg: 'bg-blue-500/10',   border: 'border-blue-500/20',   bar: 'bg-blue-500',   topBorder: '#3B82F6' },
+  { label: 'Governance Score',    value: 71, prev: 71.4, icon: Shield,   color: 'text-violet-400',  bg: 'bg-violet-500/10', border: 'border-violet-500/20', bar: 'bg-violet-500', topBorder: '#8B5CF6' },
+  { label: 'Overall ESG Score',   value: 77, prev: 75.5, icon: BarChart3, color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20', bar: 'bg-orange-500', topBorder: 'gradient' },
 ];
 
 const activities = [
@@ -57,6 +58,7 @@ function MiniBar({ value, color }: { value: number; color: string }) {
 }
 
 function CarbonTrendChart({ data }: { data: typeof carbonData }) {
+  const [hovered, setHovered] = useState<number | null>(null);
   const W = 500;
   const H = 175;
   const padL = 38, padR = 10, padT = 8, padB = 28;
@@ -76,8 +78,10 @@ function CarbonTrendChart({ data }: { data: typeof carbonData }) {
 
   const gridYs = [maxV, maxV * 0.75 + minV * 0.25, maxV * 0.5 + minV * 0.5, minV * 1.1];
 
+  const tipW = 88, tipH = 32;
+
   return (
-    <svg width="100%" height={H} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet">
+    <svg width="100%" height={H} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet" style={{ overflow: 'visible' }}>
       {gridYs.map((v, i) => (
         <g key={i}>
           <line x1={padL} y1={y(v)} x2={W - padR} y2={y(v)} stroke="#1a2035" strokeWidth={1} />
@@ -87,9 +91,26 @@ function CarbonTrendChart({ data }: { data: typeof carbonData }) {
       <path d={areaPath} fill="#10b981" fillOpacity={0.08} />
       <path d={linePath} fill="none" stroke="#10b981" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
       {data.map((d, i) => (
-        <g key={d.month}>
-          <circle cx={x(i)} cy={y(d.value)} r={3} fill="#10b981" fillOpacity={0.8} />
-          <text x={x(i)} y={H - 8} textAnchor="middle" fill="#4b5563" fontSize={9}>{d.month}</text>
+        <g key={d.month} onMouseEnter={() => setHovered(i)} onMouseLeave={() => setHovered(null)} style={{ cursor: 'crosshair' }}>
+          {/* invisible large hit target */}
+          <circle cx={x(i)} cy={y(d.value)} r={12} fill="transparent" />
+          <circle cx={x(i)} cy={y(d.value)} r={hovered === i ? 5 : 3}
+            fill="#10b981" fillOpacity={hovered === i ? 1 : 0.8}
+            stroke={hovered === i ? '#fff' : 'none'} strokeWidth={1.5}
+            style={{ transition: 'r .12s' }}
+          />
+          <text x={x(i)} y={H - 8} textAnchor="middle" fill={hovered === i ? '#10b981' : '#4b5563'} fontSize={9}>{d.month}</text>
+          {hovered === i && (() => {
+            const tx = Math.min(Math.max(x(i) - tipW / 2, padL), W - padR - tipW);
+            const ty = y(d.value) - tipH - 8;
+            return (
+              <g>
+                <rect x={tx} y={ty} width={tipW} height={tipH} rx={5} fill="#1a2035" stroke="#2a3550" strokeWidth={1} />
+                <text x={tx + tipW / 2} y={ty + 11} textAnchor="middle" fill="#6b7280" fontSize={8.5}>{d.month} 2026</text>
+                <text x={tx + tipW / 2} y={ty + 24} textAnchor="middle" fill="#10b981" fontSize={11} fontWeight="600">{d.value} t CO₂</text>
+              </g>
+            );
+          })()}
         </g>
       ))}
     </svg>
@@ -97,24 +118,41 @@ function CarbonTrendChart({ data }: { data: typeof carbonData }) {
 }
 
 function DeptRankBarChart({ data }: { data: typeof deptData }) {
+  const [hovered, setHovered] = useState<number | null>(null);
   const W = 300;
   const H = 175;
   const padL = 46, padR = 32, padT = 6, padB = 6;
   const innerH = H - padT - padB;
   const barH = 10;
   const gap = innerH / data.length;
+  const tipW = 96, tipH = 32;
 
   return (
-    <svg width="100%" height={H} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet">
+    <svg width="100%" height={H} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet" style={{ overflow: 'visible' }}>
       {data.map((d, i) => {
         const yPos = padT + i * gap + (gap - barH) / 2;
         const barW = (d.score / 100) * (W - padL - padR);
+        const isHov = hovered === i;
         return (
-          <g key={d.dept}>
-            <text x={padL - 6} y={yPos + barH - 1} textAnchor="end" fill="#6b7280" fontSize={10}>{d.dept}</text>
+          <g key={d.dept} onMouseEnter={() => setHovered(i)} onMouseLeave={() => setHovered(null)} style={{ cursor: 'pointer' }}>
+            <text x={padL - 6} y={yPos + barH - 1} textAnchor="end" fill={isHov ? '#a78bfa' : '#6b7280'} fontSize={10}>{d.dept}</text>
             <rect x={padL} y={yPos} width={W - padL - padR} height={barH} rx={5} fill="#1a2035" />
-            <rect x={padL} y={yPos} width={barW} height={barH} rx={5} fill="#8b5cf6" />
-            <text x={padL + barW + 4} y={yPos + barH - 1} fill="#8b5cf6" fontSize={9}>{d.score}</text>
+            <rect x={padL} y={yPos} width={barW} height={barH} rx={5} fill={isHov ? '#a78bfa' : '#8b5cf6'}
+              style={{ transition: 'fill .12s' }} />
+            <text x={padL + barW + 4} y={yPos + barH - 1} fill={isHov ? '#a78bfa' : '#8b5cf6'} fontSize={9}>{d.score}</text>
+            {/* invisible hit target covering whole row */}
+            <rect x={0} y={yPos - 4} width={W} height={barH + 8} fill="transparent" />
+            {isHov && (() => {
+              const tx = padL + barW / 2 - tipW / 2;
+              const ty = yPos - tipH - 6;
+              return (
+                <g>
+                  <rect x={tx} y={ty} width={tipW} height={tipH} rx={5} fill="#1a2035" stroke="#2a3550" strokeWidth={1} />
+                  <text x={tx + tipW / 2} y={ty + 11} textAnchor="middle" fill="#9ca3af" fontSize={8.5}>{d.dept} Department</text>
+                  <text x={tx + tipW / 2} y={ty + 24} textAnchor="middle" fill="#a78bfa" fontSize={11} fontWeight="600">ESG Score: {d.score}/100</text>
+                </g>
+              );
+            })()}
           </g>
         );
       })}
@@ -122,11 +160,215 @@ function DeptRankBarChart({ data }: { data: typeof deptData }) {
   );
 }
 
+// ─── Employee personal dashboard ─────────────────────────────────────────────
+
+const employeeBadges = [
+  { name: 'Eco Warrior', icon: '🌿', earned: true },
+  { name: 'Green Commuter', icon: '🚲', earned: true },
+  { name: 'Zero Waste', icon: '♻️', earned: true },
+  { name: 'Policy Pro', icon: '📋', earned: false },
+  { name: 'Team Player', icon: '🤝', earned: false },
+];
+
+const employeeChallenges = [
+  { name: 'Zero Waste Week', xp: 300, progress: 65, deadline: 'Jul 20, 2026', color: 'bg-emerald-500' },
+  { name: 'Bike to Work Month', xp: 500, progress: 40, deadline: 'Jul 31, 2026', color: 'bg-blue-500' },
+  { name: 'Paperless Office', xp: 200, progress: 80, deadline: 'Jul 15, 2026', color: 'bg-orange-500' },
+];
+
+const employeeActivity = [
+  { text: 'Tree Planting Drive participation approved', time: '10m ago', dot: 'bg-emerald-500', page: 'social' as Page },
+  { text: 'Completed Eco Warrior challenge — +300 XP', time: '2h ago', dot: 'bg-orange-500', page: 'gamification' as Page },
+  { text: 'Data Privacy Policy v2.0 acknowledged', time: '1d ago', dot: 'bg-violet-500', page: 'governance' as Page },
+  { text: 'Joined Blood Donation Drive', time: '2d ago', dot: 'bg-red-500', page: 'social' as Page },
+];
+
+function EmployeeDashboard({ onNavigate }: { onNavigate: (page: Page) => void }) {
+  const { user } = useRole();
+  const xpToNext = 5000;
+  const xpPct = Math.round((user.xp / xpToNext) * 100);
+
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-semibold text-white">My ESG Dashboard</h1>
+          <p className="text-xs text-gray-500 mt-0.5">Welcome back, {user.name} · {user.dept}</p>
+        </div>
+        <div className="flex items-center gap-2 text-xs text-gray-500">
+          <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse" />
+          Personal view
+        </div>
+      </div>
+
+      {/* Personal KPI row */}
+      <div className="grid grid-cols-4 gap-4">
+        {[
+          { label: 'ESG Points', value: user.points.toLocaleString(), icon: Star, color: 'text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20', sub: '+140 this week' },
+          { label: 'XP Earned', value: user.xp.toLocaleString(), icon: Zap, color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20', sub: `Level ${user.level}` },
+          { label: 'Badges Earned', value: String(user.badges), icon: Award, color: 'text-violet-400', bg: 'bg-violet-500/10', border: 'border-violet-500/20', sub: '2 more available' },
+          { label: 'Challenges Joined', value: '3', icon: Trophy, color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20', sub: '1 completing soon' },
+        ].map(k => {
+          const Icon = k.icon;
+          return (
+            <div key={k.label} className={`bg-[#0d1222] border ${k.border} rounded-2xl p-4`}>
+              <div className="flex items-start justify-between mb-3">
+                <div className={`w-9 h-9 ${k.bg} rounded-xl flex items-center justify-center`}>
+                  <Icon className={k.color} style={{ width: 18, height: 18 }} />
+                </div>
+              </div>
+              <div className={`text-3xl font-bold ${k.color} mb-0.5`}>{k.value}</div>
+              <div className="text-[11px] text-gray-500 mb-1">{k.label}</div>
+              <div className="text-[10px] text-gray-700">{k.sub}</div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="grid grid-cols-5 gap-4">
+        <div className="col-span-2 space-y-4">
+          {/* Level / XP ring */}
+          <div className="bg-[#0d1222] border border-[#1a2035] rounded-2xl p-5">
+            <h3 className="text-sm font-semibold text-white mb-4">Your Progress</h3>
+            <div className="flex items-center gap-4">
+              <div className="relative w-16 h-16 shrink-0">
+                <svg width="64" height="64" viewBox="0 0 64 64">
+                  <circle cx="32" cy="32" r="26" fill="none" stroke="#1a2035" strokeWidth="8" />
+                  <circle cx="32" cy="32" r="26" fill="none" stroke="#3b82f6" strokeWidth="8"
+                    strokeDasharray={`${(xpPct / 100) * 163.4} 163.4`}
+                    strokeLinecap="round" transform="rotate(-90 32 32)" />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-xs font-bold text-blue-400">{user.level}</span>
+                </div>
+              </div>
+              <div>
+                <div className="text-xs font-semibold text-white">Level {user.level}</div>
+                <div className="text-[11px] text-gray-500 mt-0.5">{user.xp.toLocaleString()} / {xpToNext.toLocaleString()} XP</div>
+                <div className="mt-2 w-32 h-1.5 bg-[#1a2035] rounded-full overflow-hidden">
+                  <div className="h-full bg-blue-500 rounded-full" style={{ width: `${xpPct}%` }} />
+                </div>
+                <div className="text-[10px] text-gray-600 mt-1">{xpToNext - user.xp} XP to Level {user.level + 1}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Badges */}
+          <div className="bg-[#0d1222] border border-[#1a2035] rounded-2xl p-5">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-semibold text-white">Badges</h3>
+              <button onClick={() => onNavigate('gamification')} className="text-[11px] text-gray-600 hover:text-gray-400 flex items-center gap-1">
+                All <ArrowUpRight className="w-3 h-3" />
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {employeeBadges.map(b => (
+                <div
+                  key={b.name}
+                  title={b.name}
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl border ${
+                    b.earned ? 'bg-orange-500/10 border-orange-500/25' : 'bg-[#111827] border-[#1a2035] opacity-35 grayscale'
+                  }`}
+                >
+                  {b.icon}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Active challenges */}
+        <div className="col-span-3 bg-[#0d1222] border border-[#1a2035] rounded-2xl p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-white">Active Challenges</h3>
+            <button onClick={() => onNavigate('gamification')} className="text-[11px] text-gray-600 hover:text-gray-400 flex items-center gap-1">
+              Browse all <ArrowUpRight className="w-3 h-3" />
+            </button>
+          </div>
+          <div className="space-y-4">
+            {employeeChallenges.map(c => (
+              <div key={c.name}>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-xs font-medium text-gray-200">{c.name}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] text-gray-600">Due {c.deadline}</span>
+                    <span className="text-[11px] text-amber-400 font-semibold">+{c.xp} XP</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 h-2 bg-[#1a2035] rounded-full overflow-hidden">
+                    <div className={`h-full ${c.color} rounded-full`} style={{ width: `${c.progress}%` }} />
+                  </div>
+                  <span className="text-[11px] text-gray-500 w-8 text-right">{c.progress}%</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom row */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="col-span-2 bg-[#0d1222] border border-[#1a2035] rounded-2xl p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-white">My Recent Activity</h3>
+            <button onClick={() => onNavigate('social')} className="text-[11px] text-gray-600 hover:text-gray-400 flex items-center gap-1">
+              All <ArrowUpRight className="w-3 h-3" />
+            </button>
+          </div>
+          <div className="space-y-3.5">
+            {employeeActivity.map((a, i) => (
+              <button key={i} onClick={() => onNavigate(a.page)} className="w-full flex items-start gap-3 text-left hover:opacity-80 transition-opacity">
+                <span className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${a.dot}`} />
+                <div>
+                  <p className="text-[11px] text-gray-300 leading-relaxed">{a.text}</p>
+                  <p className="text-[10px] text-gray-600 mt-0.5">{a.time}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Reward balance */}
+        <div className="bg-[#0d1222] border border-[#1a2035] rounded-2xl p-5">
+          <h3 className="text-sm font-semibold text-white mb-4">Reward Balance</h3>
+          <div className="text-center mb-4">
+            <div className="text-3xl font-bold text-yellow-400">{user.points.toLocaleString()}</div>
+            <div className="text-[11px] text-gray-500 mt-0.5">Points available</div>
+          </div>
+          <div className="space-y-2.5 mb-4">
+            {[
+              { label: 'Coffee Voucher', cost: 200 },
+              { label: 'Extra Day Off', cost: 800 },
+              { label: 'Charity Donation', cost: 500 },
+            ].map(r => (
+              <div key={r.label} className="flex items-center justify-between py-1.5 border-b border-[#1a2035] last:border-0">
+                <span className="text-[11px] text-gray-400">{r.label}</span>
+                <span className={`text-[11px] font-semibold ${user.points >= r.cost ? 'text-emerald-400' : 'text-gray-600'}`}>
+                  {r.cost} pts
+                </span>
+              </div>
+            ))}
+          </div>
+          <button onClick={() => onNavigate('gamification')} className="w-full py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded-xl transition-colors">
+            Browse Rewards
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Manager org dashboard ────────────────────────────────────────────────────
+
 interface DashboardPageProps {
   onNavigate: (page: Page) => void;
 }
 
 export function DashboardPage({ onNavigate }: DashboardPageProps) {
+  const { isEmployee } = useRole();
+  if (isEmployee) return <EmployeeDashboard onNavigate={onNavigate} />;
+
   const quickActions = [
     { label: 'Log Carbon Data', icon: Leaf, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20 hover:border-emerald-500/50', page: 'environmental' as Page },
     { label: 'Create Goal', icon: Target, color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20 hover:border-blue-500/50', page: 'environmental' as Page },
@@ -154,8 +396,20 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
           const change = ((kpi.value - kpi.prev) / kpi.prev * 100).toFixed(1);
           const up = kpi.value >= kpi.prev;
           return (
-            <div key={kpi.label} className={`bg-[#0d1222] border ${kpi.border} rounded-2xl p-4`}>
-              <div className="flex items-start justify-between mb-3">
+            <div
+              key={kpi.label}
+              className={`relative bg-[#0d1222] border ${kpi.border} rounded-2xl p-4 overflow-hidden`}
+              style={{ boxShadow: '0 8px 32px rgba(0,0,0,.25)' }}
+            >
+              {/* Top accent border */}
+              {kpi.topBorder === 'gradient' ? (
+                <div className="absolute top-0 left-0 right-0 h-[2px] rounded-t-2xl"
+                  style={{ background: 'linear-gradient(to right, #10b981, #3b82f6, #8b5cf6)' }} />
+              ) : (
+                <div className="absolute top-0 left-0 right-0 h-[2px] rounded-t-2xl"
+                  style={{ background: kpi.topBorder }} />
+              )}
+              <div className="flex items-start justify-between mb-3 mt-1">
                 <div className={`w-9 h-9 ${kpi.bg} rounded-xl flex items-center justify-center`}>
                   <Icon className={`${kpi.color}`} style={{ width: 18, height: 18 }} />
                 </div>
@@ -176,7 +430,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
 
       {/* Charts Row */}
       <div className="grid grid-cols-5 gap-4">
-        <div className="col-span-3 bg-[#0d1222] border border-[#1a2035] rounded-2xl p-5">
+        <div className="col-span-3 bg-[#0d1222] border border-[#1a2035] rounded-2xl p-5" style={{ boxShadow: '0 8px 32px rgba(0,0,0,.25)' }}>
           <div className="flex items-start justify-between mb-4">
             <div>
               <h3 className="text-sm font-semibold text-white">Carbon Emission Trend</h3>
@@ -189,7 +443,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
           <CarbonTrendChart data={carbonData} />
         </div>
 
-        <div className="col-span-2 bg-[#0d1222] border border-[#1a2035] rounded-2xl p-5">
+        <div className="col-span-2 bg-[#0d1222] border border-[#1a2035] rounded-2xl p-5" style={{ boxShadow: '0 8px 32px rgba(0,0,0,.25)' }}>
           <div className="flex items-start justify-between mb-4">
             <div>
               <h3 className="text-sm font-semibold text-white">Dept ESG Ranking</h3>
