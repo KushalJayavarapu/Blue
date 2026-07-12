@@ -1,0 +1,70 @@
+Here's the full screen list mapped to what backend work each one needs — organized by module, with scope status flagged per your earlier cuts.
+
+## 1. Dashboard
+**Backend must provide:**
+- `GET /api/dashboard` — aggregated endpoint returning:
+  - 4 score tiles (Environmental, Social, Governance, Overall) — pulled from `DepartmentScore` rollup logic
+  - Emissions trend data (last 12 months) — grouped/summed `CarbonTransaction.co2Calculated` by month
+  - Department ESG ranking — `DepartmentScore` sorted by `totalScore`
+  - Recent Activity feed — union of latest `EmployeeParticipation`, `ChallengeParticipation`, `CarbonTransaction` records, sorted by `submittedAt`/`date`, limited to ~5-10
+- Quick Actions are navigation only, no dedicated backend — they call the same endpoints as their target screens (Log Carbon Data → same as Environmental's create endpoint)
+
+## 2. Environmental — Emission Tracking & Goals
+**In scope, full build.**
+- `GET/POST /api/emission-factors` — CRUD (mostly just seeded, minimal UI needed)
+- `POST /api/carbon-transactions` — the "Log Carbon Data" action: takes `emissionFactorId`, `quantity`, `departmentId` → calculates `co2Calculated = quantity * emissionFactor.co2PerUnit` → stores it
+- `GET/POST/PUT/DELETE /api/environmental-goals` — full CRUD; `currentCO2` should be calculated live (sum of related `CarbonTransaction` for that department/timeframe) rather than manually maintained
+- `GET /api/environmental-goals/export` — CSV/PDF export (simple, low priority)
+
+## 3. Social — CSR & Employee Engagement
+**Scope note: build lightly** (per earlier discussion — this exists mainly to feed Gamification's points pipeline).
+- `GET/POST /api/csr-activities` — list + create
+- `POST /api/csr-activities/:id/join` — creates `EmployeeParticipation` record with `PENDING` status
+- `POST /api/employee-participation/:id/upload-proof` — file upload (multer), saves to `/uploads`, stores path
+- `GET /api/employee-participation` — approval queue list (Manager/Admin only, via `requireRole`)
+- `PUT /api/employee-participation/:id/approve` or `/reject` — updates status; on approve, increments `Employee.pointsTotal` and triggers badge-check logic
+
+## 4. Governance — Policies, Audits & Compliance
+**Scope note: recommend cutting or stubbing entirely** (per earlier scope discussion) — if cut, no backend work needed here at all; just remove the sidebar link or show static "coming soon." If kept minimal:
+- `GET/POST /api/audits` — basic CRUD, no workflow logic
+- `GET/POST /api/compliance-issues` — CRUD with `ownerId`/`dueDate`, plus a simple overdue-flag check (compare `dueDate` to now)
+- Skip Policies/Policy Acknowledgements entirely unless time allows — no feature downstream depends on them
+
+## 5. Gamification — Challenges, Badges & Leaderboard
+**In scope, full build — your second priority module.**
+- `GET/POST /api/challenges` — CRUD, `status` field drives your kanban-style columns
+- `POST /api/challenges/:id/join` — creates `ChallengeParticipation`, `PENDING`
+- `POST /api/challenge-participation/:id/upload-proof` — same upload pattern as CSR
+- `PUT /api/challenge-participation/:id/approve` — increments `Employee.xpTotal`, triggers badge-check
+- `GET /api/badges` — list all badges + which the current employee has earned
+- **Badge auto-award logic** (internal function, not a route): after any XP/points update, check hardcoded conditions (e.g., `xpTotal >= 100`) → if met and not already awarded, create `EmployeeBadge` record
+- `GET /api/leaderboard` — query employees/departments sorted by `xpTotal` descending
+- `GET/POST /api/rewards` + `POST /api/rewards/:id/redeem` — only if time allows; deducts `pointsTotal`, decrements `stock`
+
+## 6. Reports — Analytics & Custom Report Builder
+**Scope note: simplify to 2-3 fixed reports, skip the 6-filter custom builder** (per earlier recommendation).
+- `GET /api/reports/environmental` — pre-built query returning goal progress + emissions summary
+- `GET /api/reports/gamification` or `/social` — participation/completion summary
+- `GET /api/reports/esg-summary` — the 4 scores + department breakdown (reuses Dashboard's scoring logic)
+- Skip building the dynamic filter/query engine unless you finish everything else early
+
+## 7. Settings — Configuration & Administration
+- `GET/POST/PUT/DELETE /api/departments` — CRUD, Admin-only (`requireRole('ADMIN')`)
+- `GET/POST/PUT/DELETE /api/categories` — CRUD, Admin-only
+- `GET/PUT /api/settings/esg-config` — the 4 toggle switches (auto emission calc, evidence required, badge auto-award, email alerts). Store these as a simple config table or even hardcoded booleans read at startup — **these toggles should actually gate behavior** in the relevant endpoints above (e.g., if "evidence required" is off, the Approve endpoint shouldn't block on missing `proofFileUrl`)
+- Notification settings — **skip building actual email sending** (out of scope for 8 hours); a toggle that does nothing functional is fine to leave as UI-only
+
+---
+
+## Cross-cutting backend work (not tied to one screen)
+- **Auth** (already built) — every route above needs `requireAuth`, write/admin actions need `requireRole(...)`
+- **Score rollup job/function** — recalculates `DepartmentScore` (Environmental/Social/Governance/Total) whenever underlying data changes (new CarbonTransaction, new approved participation, etc.) — this is what powers the Dashboard tiles and is your single most important piece of logic
+- **File upload middleware** (multer config) — shared by both CSR and Challenge proof uploads, build once, reuse
+
+## Priority order if time gets tight
+1. Environmental (Carbon Transaction + Goals) — your scoring foundation
+2. Gamification (Challenges + Badges + Leaderboard) — your differentiation/demo centerpiece
+3. Social (just enough to feed points into Gamification)
+4. Dashboard (consumes everything above — build last)
+5. Reports (simplified) and Settings — cut first if behind schedule
+6. Governance — cut entirely if behind, or last priority if ahead
