@@ -304,7 +304,7 @@ function UserImpactTab() {
               value={paperSheets}
               min={0} max={200}
               unit=" sheets/day"
-              color="#8b5cf6"
+              color="#0e7490"
               hint="Sheets of paper printed daily on average"
               onChange={setPaperSheets}
             />
@@ -351,7 +351,7 @@ function UserImpactTab() {
             {[
               { label: 'Commute', value: Math.round(commuteCarbon), color: '#f97316', icon: '🚗' },
               { label: 'Business Travel', value: Math.round(flightCarbon), color: '#3b82f6', icon: '✈️' },
-              { label: 'Paper & Printing', value: Math.round(paperCarbon), color: '#8b5cf6', icon: '📄' },
+              { label: 'Paper & Printing', value: Math.round(paperCarbon), color: '#0e7490', icon: '📄' },
               { label: 'Devices & Equipment', value: Math.round(deviceCarbon), color: '#06b6d4', icon: '💻' },
             ].map(row => {
               const pct = totalCarbon > 0 ? Math.round((row.value / totalCarbon) * 100) : 0;
@@ -485,7 +485,7 @@ const SCENARIO_PRESETS: ScenarioPreset[] = [
           { label: 'kWh offset per year', value: `${Math.round(v.energyMWh * (v.renewablePct / 100) * 1000).toLocaleString()}`, color: '#eab308' },
           { label: 'Annual $ savings', value: `$${annualSaving.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, color: '#10b981' },
           { label: 'ROI timeline', value: `${roi.toFixed(1)} years`, color: '#3b82f6' },
-          { label: 'Carbon certificates', value: `${Math.round((before - after) / 1000 * 25).toLocaleString()} credits`, color: '#8b5cf6' },
+          { label: 'Carbon certificates', value: `${Math.round((before - after) / 1000 * 25).toLocaleString()} credits`, color: '#0e7490' },
         ],
       };
     },
@@ -500,7 +500,7 @@ const SCENARIO_PRESETS: ScenarioPreset[] = [
       { key: 'fleetSize', label: 'Fleet size', min: 1, max: 200, unit: 'vehicles', default: 25, hint: 'Total number of company-owned vehicles', color: '#10b981' },
       { key: 'avgKmPerYear', label: 'Avg km per vehicle/year', min: 5000, max: 80000, step: 500, unit: 'km', default: 25000, hint: 'Average annual distance driven per vehicle', color: '#f97316' },
       { key: 'evPct', label: 'EV transition %', min: 10, max: 100, unit: '%', default: 50, color: '#3b82f6' },
-      { key: 'costPerEV', label: 'Cost per EV', min: 20, max: 120, step: 1, unit: 'k$', default: 45, hint: 'Purchase price per electric vehicle', color: '#8b5cf6' },
+      { key: 'costPerEV', label: 'Cost per EV', min: 20, max: 120, step: 1, unit: 'k$', default: 45, hint: 'Purchase price per electric vehicle', color: '#0e7490' },
     ],
     compute: (v) => {
       const iceFactor = 0.171; // kg CO₂/km
@@ -521,7 +521,7 @@ const SCENARIO_PRESETS: ScenarioPreset[] = [
           { label: 'EVs converted', value: `${evCount} vehicles`, color: '#10b981' },
           { label: 'Annual fuel savings', value: `$${fuelSaving.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, color: '#eab308' },
           { label: 'Capex required', value: `$${(capex / 1000).toFixed(0)}k`, color: '#3b82f6' },
-          { label: 'ROI payback', value: `${roi.toFixed(1)} yrs`, color: '#8b5cf6' },
+          { label: 'ROI payback', value: `${roi.toFixed(1)} yrs`, color: '#0e7490' },
         ],
       };
     },
@@ -536,7 +536,7 @@ const SCENARIO_PRESETS: ScenarioPreset[] = [
       { key: 'employees', label: 'Eligible employees', min: 10, max: 5000, step: 10, unit: 'people', default: 300, color: '#3b82f6' },
       { key: 'currentDays', label: 'Current office days/week', min: 1, max: 5, unit: 'days', default: 4, color: '#f97316' },
       { key: 'targetDays', label: 'Target office days/week', min: 0, max: 4, unit: 'days', default: 2, hint: 'Days per week employees come into the office after policy change', color: '#10b981' },
-      { key: 'avgCommute', label: 'Avg commute distance', min: 5, max: 80, unit: 'km', default: 22, color: '#8b5cf6' },
+      { key: 'avgCommute', label: 'Avg commute distance', min: 5, max: 80, unit: 'km', default: 22, color: '#0e7490' },
     ],
     compute: (v) => {
       const factor = 0.171;
@@ -556,7 +556,7 @@ const SCENARIO_PRESETS: ScenarioPreset[] = [
           { label: 'Office days reduced', value: `${v.currentDays - v.targetDays} days/wk`, color: '#3b82f6' },
           { label: 'Annual office savings', value: `$${costSaving.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, color: '#10b981' },
           { label: 'Commute hours saved', value: `${Math.round(v.employees * (v.currentDays - v.targetDays) * weeksPerYear * 1.2).toLocaleString()} hrs`, color: '#eab308' },
-          { label: 'Emissions per employee', value: `${((before - after) / v.employees / 1000).toFixed(2)} t saved`, color: '#8b5cf6' },
+          { label: 'Emissions per employee', value: `${((before - after) / v.employees / 1000).toFixed(2)} t saved`, color: '#0e7490' },
         ],
       };
     },
@@ -566,9 +566,9 @@ const SCENARIO_PRESETS: ScenarioPreset[] = [
     label: 'Sustainable Supply Chain',
     icon: '🔗',
     desc: 'Shift procurement toward low-carbon, certified suppliers',
-    color: '#8b5cf6',
+    color: '#0e7490',
     params: [
-      { key: 'spendM', label: 'Annual procurement spend', min: 1, max: 100, unit: 'M$', default: 12, hint: 'Total annual spend with external suppliers', color: '#8b5cf6' },
+      { key: 'spendM', label: 'Annual procurement spend', min: 1, max: 100, unit: 'M$', default: 12, hint: 'Total annual spend with external suppliers', color: '#0e7490' },
       { key: 'currentScope3', label: 'Current Scope 3 intensity', min: 50, max: 500, step: 5, unit: 'tCO₂/$M', default: 180, hint: 'Estimated tonnes CO₂ per $M spend from supply chain', color: '#f97316' },
       { key: 'greenPct', label: 'Green supplier switch %', min: 5, max: 80, unit: '%', default: 30, color: '#10b981' },
       { key: 'premiumPct', label: 'Green premium', min: 0, max: 25, unit: '%', default: 8, hint: 'Extra cost of certified sustainable suppliers vs standard', color: '#eab308' },
@@ -585,7 +585,7 @@ const SCENARIO_PRESETS: ScenarioPreset[] = [
         timeToROI: 0,
         unit: 'tCO₂e',
         extras: [
-          { label: 'Scope 3 reduction', value: `${Math.round(((before - after) / before) * 100)}%`, color: '#8b5cf6' },
+          { label: 'Scope 3 reduction', value: `${Math.round(((before - after) / before) * 100)}%`, color: '#0e7490' },
           { label: 'Additional annual cost', value: `$${(extraCost / 1000).toFixed(0)}k`, color: '#f97316' },
           { label: 'tCO₂e avoided', value: `${Math.round(before - after).toLocaleString()} t`, color: '#10b981' },
           { label: 'Cost per tCO₂e', value: `$${extraCost > 0 ? (extraCost / (before - after)).toFixed(0) : '—'}`, color: '#eab308' },
@@ -787,7 +787,7 @@ export function SimulatorPage() {
           <p className="text-xs text-gray-500 mt-0.5">Model individual impact and simulate org-level sustainability scenarios with live projections</p>
         </div>
         <div className="flex items-center gap-1.5 text-[11px] text-gray-600 bg-[#111827] border border-[#1a2035] px-3 py-1.5 rounded-xl">
-          <Zap className="w-3 h-3 text-yellow-500" /> Live calculations — adjust any slider to update
+          <Zap className="w-3 h-3 text-orange-500" /> Live calculations — adjust any slider to update
         </div>
       </div>
 

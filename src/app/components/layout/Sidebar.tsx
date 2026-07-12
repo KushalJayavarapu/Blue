@@ -39,27 +39,24 @@ const NAV_ITEMS: NavItem[] = [
 interface SidebarProps {
   currentPage: Page;
   onNavigate: (page: Page) => void;
-  isDark: boolean;
 }
 
-export function Sidebar({ currentPage, onNavigate, isDark }: SidebarProps) {
+export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
   const { isManager, user } = useRole();
   const visible = NAV_ITEMS.filter(item => !item.managerOnly || isManager);
 
-  const glass   = isDark
-    ? 'linear-gradient(160deg, rgba(28,14,24,0.86) 0%, rgba(18,9,16,0.82) 100%)'
-    : 'linear-gradient(160deg, rgba(255,255,255,0.68) 0%, rgba(250,240,232,0.60) 100%)';
-  const divider = isDark ? '1px solid rgba(112,75,106,0.22)' : '1px solid rgba(112,75,106,0.14)';
+  const glass   = 'linear-gradient(160deg, rgba(255,255,255,0.68) 0%, rgba(250,240,232,0.60) 100%)';
+  const divider = '1px solid rgba(112,75,106,0.14)';
 
-  const textPrimary = isDark ? '#F0E5EB' : '#2D1B29';
-  const textSub     = isDark ? '#9A7888' : '#9B7A8C';
-  const textMuted   = isDark ? '#50384A' : '#C0A0B4';
-  const navInactive = isDark ? '#7A6072' : '#9B7A8C';
-  const navHover    = isDark ? 'rgba(112,75,106,0.15)' : 'rgba(112,75,106,0.07)';
-  const orgBg       = isDark ? 'rgba(112,75,106,0.13)' : 'rgba(112,75,106,0.06)';
-  const orgBorder   = isDark ? 'rgba(112,75,106,0.28)' : 'rgba(112,75,106,0.16)';
-  const orgHover    = isDark ? 'rgba(112,75,106,0.22)' : 'rgba(112,75,106,0.11)';
-  const managerColor = isDark ? '#C490B0' : '#704B6A';
+  const textPrimary = '#2D1B29';
+  const textSub     = '#7A5568';
+  const textMuted   = '#A87E96';
+  const navInactive = '#6B4A5A';
+  const navHover    = 'rgba(112,75,106,0.07)';
+  const orgBg       = 'rgba(112,75,106,0.06)';
+  const orgBorder   = 'rgba(112,75,106,0.16)';
+  const orgHover    = 'rgba(112,75,106,0.11)';
+  const managerColor = '#704B6A';
 
   return (
     <div
@@ -69,7 +66,7 @@ export function Sidebar({ currentPage, onNavigate, isDark }: SidebarProps) {
         backdropFilter: 'blur(24px) saturate(1.8)',
         WebkitBackdropFilter: 'blur(24px) saturate(1.8)',
         borderRight: divider,
-        boxShadow: isDark ? 'none' : 'inset -1px 0 0 rgba(255,255,255,0.5)',
+        boxShadow: 'inset -1px 0 0 rgba(255,255,255,0.5)',
       }}
     >
       {/* Brand */}

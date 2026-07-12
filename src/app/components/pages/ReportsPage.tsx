@@ -114,13 +114,13 @@ function PreviewTable({ tab }: { tab: ReportTab }) {
               <td className="px-4 py-3">
                 <div className="flex items-center gap-2">
                   <div className="w-16 h-1.5 bg-[#1a2035] rounded-full overflow-hidden">
-                    <div className={`h-full rounded-full ${row.pct >= 90 ? 'bg-emerald-500' : row.pct >= 70 ? 'bg-yellow-500' : 'bg-red-500'}`} style={{ width: `${row.pct}%` }} />
+                    <div className={`h-full rounded-full ${row.pct >= 90 ? 'bg-emerald-500' : row.pct >= 70 ? 'bg-rose-500' : 'bg-red-500'}`} style={{ width: `${row.pct}%` }} />
                   </div>
                   <span className="text-[11px] text-gray-500">{row.pct}%</span>
                 </div>
               </td>
               <td className="px-4 py-3">
-                <span className={`text-[11px] px-2 py-0.5 rounded-full border ${row.pct >= 90 ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : row.pct >= 70 ? 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20' : 'text-red-400 bg-red-500/10 border-red-500/20'}`}>
+                <span className={`text-[11px] px-2 py-0.5 rounded-full border ${row.pct >= 90 ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : row.pct >= 70 ? 'text-rose-400 bg-rose-500/10 border-rose-500/20' : 'text-red-400 bg-red-500/10 border-red-500/20'}`}>
                   {row.pct >= 90 ? 'On Track' : row.pct >= 70 ? 'At Risk' : 'Off Track'}
                 </span>
               </td>

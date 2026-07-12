@@ -47,7 +47,7 @@ const DEPTS = ['Engineering', 'Marketing', 'Operations', 'Finance', 'HR', 'Sales
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, string> = {
     'on-track': 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
-    'at-risk': 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20',
+    'at-risk': 'text-rose-400 bg-rose-500/10 border-rose-500/20',
     'completed': 'text-blue-400 bg-blue-500/10 border-blue-500/20',
     'overdue': 'text-red-400 bg-red-500/10 border-red-500/20',
   };
@@ -61,7 +61,7 @@ function StatusBadge({ status }: { status: string }) {
 
 function ProgressBar({ current, target }: { current: number; target: number }) {
   const pct = Math.min(Math.round((current / target) * 100), 100);
-  const color = pct >= 95 ? 'bg-blue-500' : pct >= 70 ? 'bg-emerald-500' : pct >= 45 ? 'bg-yellow-500' : 'bg-red-500';
+  const color = pct >= 95 ? 'bg-blue-500' : pct >= 70 ? 'bg-emerald-500' : pct >= 45 ? 'bg-rose-500' : 'bg-red-500';
   return (
     <div className="flex items-center gap-2 min-w-[110px]">
       <div className="flex-1 h-1.5 bg-[#1a2035] rounded-full overflow-hidden">
@@ -270,7 +270,7 @@ function GoalDrawer({ goal, onClose, onEdit }: { goal: Goal; onClose: () => void
               <span className="text-sm font-semibold text-gray-200">{pct}%</span>
             </div>
             <div className="w-full h-2.5 bg-[#1a2035] rounded-full overflow-hidden">
-              <div className={`h-full rounded-full transition-all duration-700 ${pct >= 95 ? 'bg-blue-500' : pct >= 70 ? 'bg-emerald-500' : pct >= 45 ? 'bg-yellow-500' : 'bg-red-500'}`} style={{ width: `${pct}%` }} />
+              <div className={`h-full rounded-full transition-all duration-700 ${pct >= 95 ? 'bg-blue-500' : pct >= 70 ? 'bg-emerald-500' : pct >= 45 ? 'bg-rose-500' : 'bg-red-500'}`} style={{ width: `${pct}%` }} />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">

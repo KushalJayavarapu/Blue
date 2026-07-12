@@ -1,9 +1,5 @@
-@custom-variant dark (&:is(.dark *));
-
 /* ═══════════════════════════════════════════════
-   LIGHT / DARK MODE THEME TOKENS
-   data-theme="dark"  → default (dark navy palette)
-   data-theme="light" → liquid-glass cream palette (brand: #704B6A)
+   THEME TOKENS — liquid-glass cream palette (brand: #704B6A)
 ═══════════════════════════════════════════════ */
 
 /* ---------- LIQUID GLASS SURFACES (cream + white, frosted) ---------- */
@@ -65,7 +61,11 @@
 [data-theme="light"] .text-gray-100 { color: #3D2535 !important; }
 [data-theme="light"] .text-gray-200 { color: #4A3040 !important; }
 [data-theme="light"] .text-gray-300 { color: #6B4A5A !important; }
-/* gray-400 through gray-700 are already legible on cream — leave untouched */
+/* gray-400/500 read too faint on the cream background — darken for legibility */
+[data-theme="light"] .text-gray-400 { color: #8A6B7E !important; }
+[data-theme="light"] .text-gray-500 { color: #6B4A5A !important; }
+[data-theme="light"] .text-gray-600 { color: #5A3D4A !important; }
+/* gray-700 is already legible on cream — leave untouched */
 
 /* ---------- Sign-in CTA and other violet brand buttons → liquid glass mauve ---------- */
 .bg-violet-600 {
@@ -73,13 +73,12 @@
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 6px 20px -6px rgba(112,75,106,0.55) !important;
 }
 .hover\:bg-violet-500:hover {
-  background: linear-gradient(160deg, #8F6389 0%, #7E5578 55%, #684459 100%) !important;
+  background: linear-gradient(160deg, #8F6389 0%, #7E5578 55%, #704B6A 100%) !important;
 }
 
 /* ---------- ALL other solid CTA buttons (Join / Approve / Create / etc.) → same purple glass ---------- */
 [data-theme="light"] .bg-blue-600,
 [data-theme="light"] .bg-emerald-600,
-[data-theme="light"] .bg-amber-600,
 [data-theme="light"] .bg-orange-600 {
   background: linear-gradient(160deg, #7E5578 0%, #704B6A 55%, #5C3D57 100%) !important;
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 6px 20px -6px rgba(112,75,106,0.55) !important;
@@ -87,19 +86,16 @@
 }
 [data-theme="light"] .hover\:bg-blue-500:hover,
 [data-theme="light"] .hover\:bg-emerald-500:hover,
-[data-theme="light"] .hover\:bg-amber-500:hover,
 [data-theme="light"] .hover\:bg-orange-500:hover {
-  background: linear-gradient(160deg, #8F6389 0%, #7E5578 55%, #684459 100%) !important;
+  background: linear-gradient(160deg, #8F6389 0%, #7E5578 55%, #704B6A 100%) !important;
 }
-[data-theme="light"] .hover\:bg-blue-600:hover,
-[data-theme="light"] .hover\:bg-amber-600:hover {
+[data-theme="light"] .hover\:bg-blue-600:hover {
   background: #5C3D57 !important;
 }
 
 /* ---------- Active tab pills (CSR Activities / Employee Participation / etc.) ---------- */
 [data-theme="light"] .bg-blue-600\/90,
 [data-theme="light"] .bg-emerald-600\/90,
-[data-theme="light"] .bg-amber-600\/90,
 [data-theme="light"] .bg-violet-600\/90 {
   background: rgba(112,75,106,0.92) !important;
   color: #ffffff !important;
@@ -107,12 +103,12 @@
 
 /* ---------- Ghost / outline secondary buttons (Import Data, filter chips) ---------- */
 [data-theme="light"] .bg-blue-600\/15,
-[data-theme="light"] .bg-amber-600\/20 {
+[data-theme="light"] .bg-orange-600\/20 {
   background: rgba(112,75,106,0.12) !important;
   border-color: rgba(112,75,106,0.28) !important;
 }
 [data-theme="light"] .hover\:bg-blue-600\/25:hover,
-[data-theme="light"] .hover\:bg-amber-600\/30:hover {
+[data-theme="light"] .hover\:bg-orange-600\/30:hover {
   background: rgba(112,75,106,0.22) !important;
 }
 
@@ -126,8 +122,6 @@
 [data-theme="light"] .bg-emerald-700,
 [data-theme="light"] .bg-blue-600,
 [data-theme="light"] .bg-blue-700,
-[data-theme="light"] .bg-amber-600,
-[data-theme="light"] .bg-amber-700,
 [data-theme="light"] .bg-red-600,
 [data-theme="light"] .bg-red-700,
 [data-theme="light"] .bg-orange-600,
@@ -193,43 +187,6 @@
   --sidebar-accent-foreground: #704B6A;
   --sidebar-border: rgba(112, 75, 106, 0.16);
   --sidebar-ring: #704B6A;
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
-  --font-weight-medium: 500;
-  --font-weight-normal: 400;
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
 }
 
 @theme inline {
